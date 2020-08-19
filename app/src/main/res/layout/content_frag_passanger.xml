@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="1dp">
+
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical">-->
+
+
+<!--        &lt;!&ndash;    &lt;!&ndash; Adding bottom sheet after main content &ndash;&gt;&ndash;&gt;-->
+<!--        <include layout="@layout/content_frag_people"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_marginRight="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:id="@+id/view_passanger"-->
+<!--            android:visibility="visible"-->
+<!--            android:layout_gravity="bottom|center">-->
+
+<!--        </include>-->
+
+
+<!--        &lt;!&ndash;    &lt;!&ndash; Adding bottom sheet after main content &ndash;&gt;&ndash;&gt;-->
+<!--        <include layout="@layout/content_frag_delivery"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_marginRight="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:id="@+id/view_delivery"-->
+<!--            android:visibility="gone"-->
+<!--            android:layout_gravity="bottom|center">-->
+
+<!--        </include>-->
+
+
+<!--        &lt;!&ndash;    &lt;!&ndash; Adding bottom sheet after main content &ndash;&gt;&ndash;&gt;-->
+<!--        <include layout="@layout/content_frag_boda_rider_found"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_marginRight="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:id="@+id/view_rider_found"-->
+<!--            android:visibility="gone"-->
+<!--            android:layout_gravity="bottom|center">-->
+<!--        </include>-->
+
+<!--        &lt;!&ndash;    &lt;!&ndash; Adding bottom sheet after main content &ndash;&gt;&ndash;&gt;-->
+<!--        <include layout="@layout/content_frag_boda_accept_ride"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_marginRight="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:id="@+id/view_accept_ride"-->
+<!--            android:visibility="gone"-->
+<!--            android:layout_marginBottom="64dp"-->
+<!--            android:layout_gravity="bottom|center">-->
+
+<!--        </include>-->
+
+
+<!--    </LinearLayout>-->
+
+
+
+</androidx.cardview.widget.CardView>

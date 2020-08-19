@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">Boda Mtaani</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="api_key">AIzaSyCJPd3_QNzimlIuZtiPG3wiqo-hOgPs_3I</string>
+
+<!--    application strings-->
+    <string name="pass_pickup">Set your pickup point</string>
+    <string name="pass_destination">Set your destination point</string>
+    <string name="parcel_pickup">Choose parcel pickup location</string>
+    <string name="parcel_destination">Choose the delivery address</string>
+    <string name="account_delete"><u>Delete My Account</u>.</string>
+    <string name="logout"><u>Log Out</u>.</string>
+
+
+
+
+
+    <string-array name="parcel_size">
+        <item>Select parcel size</item>
+        <item>Small (0-50)Kg</item>
+        <item>Large (50-100)Kg</item>
+        <item>Extra Large (100- 150)Kg</item>
+        <item>Extra Large (150- 200) Maximum Kg</item>
+
+    </string-array>
+
+
+    <string-array name="merchant_account_type">
+        <item>Select account type</item>
+        <item>Boda boda rider</item>
+        <item>Business deliveries account</item>
+
+    </string-array>
+
+
+    <string-array name="trip_states">
+        <item>submitted</item>
+        <item>accepted</item>
+        <item>ready for pick up</item>
+        <item>In transit</item>
+        <item>arrived at destination</item>
+        <item>canceled</item>
+        <item>disputed</item>
+        <item>failed</item>
+        <item>closed</item>
+    </string-array>
+
+
+</resources>

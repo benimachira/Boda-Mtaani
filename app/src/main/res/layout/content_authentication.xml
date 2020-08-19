@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="60dp"
+        android:layout_gravity="top"
+        android:orientation="vertical"
+        >
+
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Boda Mtaani"
+            android:textSize="20sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+        </com.google.android.gms.common.SignInButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Login with google"
+            android:textSize="12sp">
+
+        </TextView>
+
+
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:background="@drawable/my_button_bg_accent"
+            android:text="Login with phone"
+            android:onClick="login_with_phone"
+            android:textColor="@color/white"
+            android:layout_marginTop="48dp"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            />
+
+        />
+
+    </LinearLayout>
+    
+
+</FrameLayout>
+
+

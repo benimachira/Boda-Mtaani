@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "80278830964",
+    "firebase_url": "https://orion3shoppy.firebaseio.com",
+    "project_id": "orion3shoppy",
+    "storage_bucket": "orion3shoppy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80278830964:android:8aadd5c5cad54d097b3621",
+        "android_client_info": {
+          "package_name": "com.orion3shoppy.bodamtaani"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "80278830964-gg3dsorfj8crtpsnk4pbg4bn1267l8h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZa4GwexcpRtXDjDaFIIshZ5JcJGgA4tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "80278830964-gg3dsorfj8crtpsnk4pbg4bn1267l8h5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

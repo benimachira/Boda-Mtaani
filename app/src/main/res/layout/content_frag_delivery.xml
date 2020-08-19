@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_margin="4dp"
+    app:cardBackgroundColor="@android:color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Boda parceld delivery"
+            android:textColor="@color/colorPrimaryDark"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:id="@+id/tv_delivery_cost"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/owl_blue"
+            android:textStyle="bold" />
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/my_round_et"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:layout_margin="16dp"
+            android:id="@+id/et_pick_loca"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:gravity="left"
+                android:textSize="14dp"
+                android:paddingLeft="8dp"
+                android:id="@+id/tv_parcel_pickup"
+                android:layout_height="wrap_content"
+                android:text="@string/parcel_pickup" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/my_round_et"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:layout_margin="16dp"
+            android:id="@+id/et_delivery_loca"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:gravity="left"
+                android:paddingLeft="8dp"
+                android:textSize="14dp"
+                android:id="@+id/tv_parcel_destination"
+                android:layout_height="wrap_content"
+                android:text="@string/parcel_destination" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <Spinner
+            android:id="@+id/spinner_parcel_size"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:spinnerMode="dropdown" />
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="16dp"
+            android:textSize="13dp"
+            android:textAllCaps="true"
+            android:onClick="request_rider"
+            android:background="@drawable/my_button_bg_accent"
+            android:foreground="?attr/selectableItemBackground"
+            android:text="Request for Delivery"
+            android:textColor="#fff" />
+
+
+
+    </LinearLayout>
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="4dp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+        <!--            <LinearLayout-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:padding="4dp"-->
+        <!--                android:gravity="center"-->
+        <!--                android:visibility="visible"-->
+        <!--                android:id="@+id/linear_none"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:orientation="vertical">-->
+
+        <!--                <TextView-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:layout_marginTop="60dp"-->
+        <!--                    android:textStyle="bold"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:text="Start by giving your shopping list a name"-->
+        <!--                    android:textSize="14sp" />-->
+
+
+        <!--                <com.google.android.material.textfield.TextInputLayout-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_marginTop="60dp"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:layout_marginBottom="30dp">-->
+
+        <!--                    <EditText-->
+        <!--                        android:id="@+id/ed_item_shoplist_name"-->
+        <!--                        android:layout_width="match_parent"-->
+        <!--                        android:layout_height="45dp"-->
+        <!--                        android:background="@drawable/my_round_et"-->
+        <!--                        android:hint="Add shopping list name"-->
+        <!--                        android:inputType="text"-->
+        <!--                        android:maxLength="200"-->
+        <!--                        android:layout_margin="8dp"-->
+        <!--                        android:paddingLeft="8dp"-->
+        <!--                        android:textColor="@color/black"-->
+        <!--                        android:textSize="14sp" />-->
+
+        <!--                </com.google.android.material.textfield.TextInputLayout>-->
+
+
+        <!--                <Button-->
+        <!--                    android:id="@+id/add_an_item"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="45dp"-->
+        <!--                    android:layout_margin="8dp"-->
+        <!--                    android:background="@drawable/my_button_bg_accent"-->
+        <!--                    android:text="Proceede"-->
+        <!--                    android:onClick="create_shop_dem"-->
+        <!--                    android:textAllCaps="false"-->
+        <!--                    android:textColor="@color/white"-->
+        <!--                    android:textSize="14dp" />-->
+
+
+        <!--            </LinearLayout>-->
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

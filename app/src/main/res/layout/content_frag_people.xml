@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="4dp"
+    android:layout_margin="4dp"
+    app:cardElevation="1dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:id="@+id/content_ride_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Request Boda Passenger"
+            android:textColor="@color/black" />
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:id="@+id/tv_pass_cost"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text=""
+            android:visibility="gone"
+            android:textColor="@color/owl_blue"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/my_round_et"
+            android:layout_height="wrap_content"
+            android:minHeight="42dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="16dp"
+            android:id="@+id/et_pick_loca"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:gravity="left"
+                android:textSize="14dp"
+                android:paddingLeft="8dp"
+                android:id="@+id/ed_pick_loca"
+                android:layout_height="wrap_content"
+                android:text="@string/pass_pickup" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/my_round_et"
+            android:layout_height="wrap_content"
+            android:minHeight="42dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:id="@+id/et_delivery_loca"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:gravity="left"
+                android:paddingLeft="8dp"
+                android:textSize="14dp"
+                android:id="@+id/ed_delivery_loca"
+                android:layout_height="wrap_content"
+                android:text="@string/pass_destination" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="16dp"
+            android:textSize="13dp"
+            android:textAllCaps="true"
+            android:id="@+id/request_rider_pass"
+            android:onClick="request_pass_rider"
+            android:background="@drawable/my_button_bg_accent"
+            android:foreground="?attr/selectableItemBackground"
+            android:text="Request a rider"
+            android:textColor="#fff" />
+
+
+
+
+
+
+    </LinearLayout>
+
+
+
+    <!--    &lt;!&ndash; Adding bottom sheet after main content &ndash;&gt;-->
+    <include layout="@layout/content_frag_boda_rider_found"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"
+        android:id="@+id/content_rider_found"
+        android:visibility="gone"
+        android:layout_marginBottom="64dp"
+        android:layout_gravity="bottom|center">
+    </include>
+
+        <!--    &lt;!&ndash; Adding bottom sheet after main content &ndash;&gt;-->
+        <include layout="@layout/content_frag_boda_accept_ride"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"
+            android:id="@+id/content_boda_accept_ride"
+            android:visibility="gone"
+            android:layout_marginBottom="64dp"
+            android:layout_gravity="bottom|center">
+
+        </include>
+
+
+        <!--    &lt;!&ndash; Adding bottom sheet after main content &ndash;&gt;-->
+        <include layout="@layout/content_frag_delivery"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"
+            android:id="@+id/content_boda_accept_ride"
+            android:visibility="gone"
+            android:layout_marginBottom="64dp"
+            android:layout_gravity="bottom|center">
+
+        </include>
+
+    </LinearLayout>
+
+
+
+</androidx.cardview.widget.CardView>

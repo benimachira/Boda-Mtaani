@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/mother_layout"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/ToolBarWithNavigationBack"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:minHeight="?android:attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:title="My Account"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:popupTheme="@style/Theme.DesignDemo.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/content_my_profile" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!--<?xml version="1.0" encoding="utf-8"?>--><!--<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--xmlns:tools="http://schemas.android.com/tools"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--tools:context=".ActivityMyProfile">-->
+
+    <!--<LinearLayout--><!--android:layout_width="match_parent"--><!--android:orientation="vertical"--><!--android:layout_height="match_parent">-->
+
+
+    <!--<com.google.android.material.appbar.AppBarLayout--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content"--><!--android:fitsSystemWindows="true"--><!--android:theme="@style/Theme.DesignDemo.AppBarOverlay">-->
+
+    <!--<com.google.android.material.appbar.CollapsingToolbarLayout--><!--android:id="@+id/collapsing_toolbar"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--android:fitsSystemWindows="true"--><!--app:contentScrim="?attr/colorPrimary"--><!--app:expandedTitleMarginEnd="64dp"--><!--app:expandedTitleMarginStart="48dp"--><!--app:layout_scrollFlags="scroll|exitUntilCollapsed">-->
+
+    <!--<androidx.appcompat.widget.Toolbar--><!--android:id="@+id/toolbar_create_profile"--><!--android:layout_width="match_parent"--><!--app:title="My Profile"--><!--android:layout_height="?attr/actionBarSize"--><!--android:background="?attr/colorPrimary"--><!--style="@style/ToolBarWithNavigationBack"--><!--app:layout_scrollFlags="scroll|enterAlways"--><!--app:popupTheme="@style/Theme.DesignDemo.PopupOverlay" />-->
+
+    <!--</com.google.android.material.appbar.CollapsingToolbarLayout>-->
+
+
+    <!--</com.google.android.material.appbar.AppBarLayout>-->
+
+    <!--<include layout="@layout/content_my_profile" />--><!--</LinearLayout>-->
+
+
+    <!--</androidx.coordinatorlayout.widget.CoordinatorLayout>-->

@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="4dp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:text="Your documents will be reviewed to activate your Boda Boda driver account"
+        android:gravity="center"
+        android:id="@+id/tv_top_info"
+        android:textColor="@color/black"
+        android:layout_marginBottom="4dp"
+        android:textSize="16dp"
+        android:layout_height="wrap_content">
+
+    </TextView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linear_doc_layer"
+        android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_read"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="2dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:id="@+id/linear_add_supa_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/img_id_photo"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:scaleType="centerCrop"
+                            android:layout_marginBottom="8dp"
+                            android:background="@color/gray_200">
+                            
+                        </ImageView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:layout_marginStart="4dp"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text="Your national Id"
+                            android:textSize="14dp"
+                            android:id="@+id/tv_display_id"
+                            android:gravity="left"
+                            android:layout_height="wrap_content"/>
+
+
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text="Verified : "
+                            android:textSize="12dp"
+                            android:id="@+id/tv_display_id_status"
+                            android:gravity="left"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                        <View android:layout_height="1dp"
+                            android:layout_margin="4dp"
+                            android:layout_width="match_parent"
+                            android:background="@color/gray_200">
+                        </View>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_marginBottom="4dp"
+                                android:background="@drawable/my_round_button_gray"
+                                android:padding="4dp"
+                                android:onClick="add_id"
+                                android:src="@drawable/ic_document"
+                                android:tint="@color/black" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:text=""
+                                android:textSize="12dp"
+                                android:id="@+id/tv_id_display"
+                                android:gravity="center"
+                                android:textColor="@color/black"
+                                android:layout_height="wrap_content">
+
+                            </TextView>
+                        </LinearLayout>
+
+
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="2dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="4dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+
+                        <ImageView
+                            android:id="@+id/img_passport"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:scaleType="centerCrop"
+
+                            android:background="@color/gray_200">
+                            
+                        </ImageView>
+
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:layout_marginStart="4dp"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:text="Your passport"
+                                android:textSize="14dp"
+                                android:id="@+id/tv_display_passport"
+                                android:gravity="left"
+                                android:layout_height="wrap_content"/>
+
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:text="Verified : "
+                                android:textSize="12dp"
+                                android:id="@+id/tv_display_passport_status"
+                                android:gravity="left"
+                                android:layout_height="wrap_content"/>
+
+                        </LinearLayout>
+
+                        <View android:layout_height="1dp"
+                            android:layout_margin="4dp"
+                            android:layout_width="match_parent"
+                            android:background="@color/gray_200">
+                        </View>
+
+
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginBottom="4dp"
+                            android:background="@drawable/my_round_button_gray"
+                            android:padding="4dp"
+                            android:onClick="add_passport"
+                            android:src="@drawable/ic_document"
+                            android:tint="@color/black" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:gravity="center"
+                            android:textSize="12dp"
+                            android:id="@+id/tv_passport_display"
+                            android:layout_height="wrap_content">
+                        </TextView>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardCornerRadius="2dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:id="@+id/linear_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+
+                    <ImageView
+                        android:id="@+id/img_licence_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginTop="4dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/gray_200">
+
+                    </ImageView>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:layout_marginStart="4dp"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text="Your Drivers licence"
+                            android:textSize="14dp"
+                            android:id="@+id/tv_display_licence"
+                            android:gravity="left"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text="Verified : "
+                            android:textSize="12dp"
+                            android:id="@+id/tv_display_licence_status"
+                            android:gravity="left"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                    <View android:layout_height="1dp"
+                        android:layout_margin="4dp"
+                        android:layout_width="match_parent"
+                        android:background="@color/gray_200">
+                    </View>
+
+
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/my_round_button_gray"
+                        android:padding="4dp"
+                        android:onClick="add_licence"
+                        android:src="@drawable/ic_document"
+                        android:tint="@color/black" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text=""
+                        android:textSize="12dp"
+                        android:id="@+id/tv_licence_display"
+                        android:textColor="@color/black"
+                        android:gravity="center"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
+            android:gravity="left"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+
+            <!--                <ImageButton-->
+            <!--                    android:layout_width="34dp"-->
+            <!--                    android:layout_height="34dp"-->
+            <!--                    android:background="@drawable/my_round_button"-->
+            <!--                    android:onClick="add_promo_image"-->
+            <!--                    android:padding="4dp"-->
+            <!--                    android:layout_marginBottom="2dp"-->
+            <!--                    android:scaleType="fitCenter"-->
+            <!--                    android:src="@drawable/ic_camera"-->
+            <!--                    android:tint="@color/white" />-->
+
+            <!--                <TextView-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:gravity="center"-->
+            <!--                    android:text="Add photo"-->
+            <!--                    android:textColor="@color/black"-->
+            <!--                    android:textSize="10sp" />-->
+        </LinearLayout>
+
+    </LinearLayout>
+    
+
+</LinearLayout>
+</ScrollView>
