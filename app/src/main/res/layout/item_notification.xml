@@ -19,6 +19,15 @@
         android:gravity="left|center"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textIsSelectable="true"
+            android:id="@+id/tv_details"
+            android:textColor="@color/black"
+            android:text=""
+            android:textSize="13sp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -28,18 +37,9 @@
             android:textColor="@color/black"
             android:text=""
             android:layout_marginBottom="2dp"
-            android:textStyle="bold"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:textIsSelectable="true"
-            android:id="@+id/tv_details"
-            android:textColor="@color/black"
-            android:text=""
-            android:textSize="15sp" />
+
     </LinearLayout>
 
 

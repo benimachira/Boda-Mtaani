@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,8 @@ public class Fragment1_PassangerRide extends Fragment {
     List<LatLng> pickup_lat_log = new ArrayList<>();
     List<LatLng> destination_lat_log = new ArrayList<>();
     double trip_cost = 0;
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

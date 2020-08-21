@@ -2,16 +2,9 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:id="@+id/setting_cordinator"
     android:layout_height="match_parent"
-    android:id="@+id/mother_layout"
     android:fitsSystemWindows="true">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="match_parent">
-
-
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -27,14 +20,32 @@
                 android:layout_height="?android:attr/actionBarSize"
                 android:minHeight="?android:attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:title="My Account"
+                app:title="Tracking"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:popupTheme="@style/Theme.DesignDemo.PopupOverlay" />
+                >
+
+            </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_my_profile" />
 
-    </LinearLayout>
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!--    &lt;!&ndash; Adding bottom sheet after main content &ndash;&gt;-->
+        <include layout="@layout/content_frag_track_trip"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"
+            android:visibility="visible"
+            android:layout_marginBottom="4dp"
+            android:layout_gravity="bottom|center">
+
+        </include>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

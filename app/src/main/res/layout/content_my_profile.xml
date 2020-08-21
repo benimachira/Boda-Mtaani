@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="140dp"
             android:background="@color/colorPrimary"
-            android:onClick="autheniticate_merchant"
             app:layout_collapseMode="parallax"
             app:layout_collapseParallaxMultiplier="0.7">
 
@@ -60,17 +59,34 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/img_pic_min"
-                            android:layout_width="65dp"
-                            android:layout_height="65dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginBottom="2dp"
-                            android:padding="5dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/user" />
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:id="@+id/frame_message2"
+                            android:layout_height="match_parent">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/img_pic_min"
+                                android:layout_width="65dp"
+                                android:layout_height="65dp"
+                                android:padding="5dp"
+                                android:layout_gravity="center"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/user" />
+
+                            <ImageView
+                                android:id="@+id/img_change_pic"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="bottom|right"
+                                android:padding="2dp"
+                                android:layout_marginLeft="8dp"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_camera"
+                                android:tint="@color/green_500" />
+
+                        </FrameLayout>
+
                     </LinearLayout>
 
 
@@ -92,7 +108,7 @@
                             android:gravity="left"
                             android:text=""
                             android:textAppearance="?attr/textAppearanceListItem"
-                            android:textSize="17sp"
+                            android:textSize="15sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -226,23 +242,24 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="8dp"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:text="Boda Boda Driver Account"
+                    android:text="Rider Account"
                     android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
+                    android:gravity="center"
                     android:textStyle="bold"
                     android:text=""
+                    android:background="@drawable/my_round_et_gray"
                     android:id="@+id/tv_boda_balance"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="16dp"
                     android:textColor="@color/owl_blue"
-                    android:textSize="13sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -251,26 +268,22 @@
                     android:layout_marginBottom="8dp"
                     android:id="@+id/tv_boda_acc_state"
                     android:text=""
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:textStyle="bold"
                     android:text=""
                     android:id="@+id/tv_total_trips"
                     android:layout_marginBottom="16dp"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
-                    android:alpha=".5"
-                    android:layout_margin="8dp"
+                    android:alpha="1"
                     android:background="@color/gray_200" />
 
 

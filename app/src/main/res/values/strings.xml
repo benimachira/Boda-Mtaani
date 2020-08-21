@@ -4,8 +4,8 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="api_key">AIzaSyCJPd3_QNzimlIuZtiPG3wiqo-hOgPs_3I</string>
-
+<!--    <string name="api_key">AIzaSyCJPd3_QNzimlIuZtiPG3wiqo-hOgPs_3I</string>-->
+    <string name="api_key">AIzaSyArsA5HFv_Wpu_xjehyVT_SF5x_iZpC6z0</string>
 <!--    application strings-->
     <string name="pass_pickup">Set your pickup point</string>
     <string name="pass_destination">Set your destination point</string>

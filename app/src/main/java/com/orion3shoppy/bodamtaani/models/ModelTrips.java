@@ -60,7 +60,14 @@ public class ModelTrips {
     double log_1 ;
     double log_2 ;
     int payment_verified;
+
+    public int getTrip_is_alive() {
+        return trip_is_alive;
+    }
+
+    int trip_is_alive;
     String document_id;
+
 
     public int getTrip_bundle_status() {
         return trip_bundle_status;
@@ -86,7 +93,8 @@ public class ModelTrips {
 
     public ModelTrips(String user_id,int trip_state,String trip_driver_id,
                       double lat_1,double lat_2 , double log_1 ,double log_2,int trip_type,
-                      int payment_verified, int trip_bundle_status,String trip_bundle_day,String trip_date) {
+                      int payment_verified, int trip_bundle_status,String trip_bundle_day,
+                      String trip_date,int trip_is_alive) {
 
         this.user_id = user_id;
         this.trip_state = trip_state;
@@ -100,6 +108,7 @@ public class ModelTrips {
         this.trip_bundle_status = trip_bundle_status;
         this.trip_bundle_day = trip_bundle_day;
         this.trip_date = trip_date;
+        this.trip_is_alive = trip_is_alive;
 
 
 

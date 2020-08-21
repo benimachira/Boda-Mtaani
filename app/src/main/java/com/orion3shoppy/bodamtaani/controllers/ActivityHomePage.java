@@ -78,6 +78,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.orion3shoppy.bodamtaani.R;
+import com.orion3shoppy.bodamtaani.fragments.Fragment11_Tracking;
 import com.orion3shoppy.bodamtaani.fragments.Fragment4_RiderComing;
 import com.orion3shoppy.bodamtaani.fragments.Fragment2_ParcelRide;
 import com.orion3shoppy.bodamtaani.fragments.Fragment1_PassangerRide;
@@ -232,8 +233,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
     Polyline polylineFinal = null;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -246,7 +245,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
 //        initiate_control_panel();
 
-        gpsTracker= new GPSTracker(context);
+        gpsTracker = new GPSTracker(context);
         fragment = new Fragment1_PassangerRide();
         loadFragment(fragment);
 
@@ -270,7 +269,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         tv_header_other = (TextView) headerView.findViewById(R.id.tv_header_other);
         tv_ac_status = (TextView) headerView.findViewById(R.id.tv_ac_status);
         img_user_avatar = (CircleImageView) headerView.findViewById(R.id.img_user_avatar);
-        tv_count= (TextView) findViewById(R.id.tv_count);
+        tv_count = (TextView) findViewById(R.id.tv_count);
 
 
         navigation = (BottomNavigationView) findViewById(R.id.nav_view);
@@ -333,6 +332,16 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
             }
         });
 
+        img_user_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ActivityMyProfile.class);
+                startActivity(intent);
+            }
+        });
+
+
+
 
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -369,8 +378,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 //                        Toast.makeText(context, token, Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
 
 
     }
@@ -486,7 +493,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-
     public void boda_watch_job_request() {
 
         String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
@@ -514,7 +520,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                                 Bundle bundle = new Bundle();
                                 bundle.putString("trip_id", trip_id);
                                 bundle.putString("user_id", user_id);
-
 
 
                                 Fragment7_BodaAcceptRide fragment2 = new Fragment7_BodaAcceptRide();
@@ -564,10 +569,10 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
                         final LatLng picku_up_loca = new LatLng(note.getLat_1(), note.getLog_1());
                         final LatLng destination_loca = new LatLng(note.getLat_2(), note.getLog_2());
-
+                        set_up_markers(picku_up_loca, 1);
+                        set_up_markers(destination_loca, 2);
 
                         add_polyline(picku_up_loca, destination_loca);
-
 
 
                         Log.d("fffffffffff ", "wwww " + driver_id);
@@ -582,7 +587,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                             bundle.putString("trip_id", trip_id);
 
 
-                            Fragment3_RiderFound fragment3= new Fragment3_RiderFound();
+                            Fragment3_RiderFound fragment3 = new Fragment3_RiderFound();
                             fragment3.setArguments(bundle);
                             loadFragment(fragment3);
 
@@ -655,47 +660,47 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
     private void select_user() {
 
 
-        REF_COL_NOTIFICATION.whereEqualTo(NOTIFICATION_user_id,UID)
-                .whereEqualTo(NOTIFICATION_status,0).
+        REF_COL_NOTIFICATION.whereEqualTo(NOTIFICATION_user_id, UID)
+                .whereEqualTo(NOTIFICATION_status, 0).
                 limit(10).
                 addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
-                if (queryDocumentSnapshots.size() > 0) {
+                        if (queryDocumentSnapshots.size() > 0) {
 
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
-                        ModelNotification note = doc.toObject(ModelNotification.class);
+                                ModelNotification note = doc.toObject(ModelNotification.class);
 
+
+                            }
+
+                            tv_count.setVisibility(View.VISIBLE);
+                            tv_count.setText("" + queryDocumentSnapshots.size());
+
+                            int color_red = ContextCompat.getColor(context, R.color.yellow_A200);
+                            ImageViewCompat.setImageTintList(img_offers, ColorStateList.valueOf(color_red));
+
+                            tv_count.setTextColor(getResources().getColor(R.color.yellow_A200));
+
+
+                            createNotification("This is the one", context);
+
+                        }
 
                     }
-
-                    tv_count.setVisibility(View.VISIBLE);
-                    tv_count.setText(""+queryDocumentSnapshots.size());
-
-                    int color_red =  ContextCompat.getColor(context, R.color.yellow_A200);
-                    ImageViewCompat.setImageTintList(img_offers, ColorStateList.valueOf(color_red));
-
-                    tv_count.setTextColor(getResources().getColor(R.color.yellow_A200));
-
-
-                    createNotification("This is the one", context);
-
-                }
-
-            }
-        });
+                });
 
 
     }
 
-    public void add_polyline(LatLng pick_up_loca ,  LatLng destination_loca){
+    public void add_polyline(LatLng pick_up_loca, LatLng destination_loca) {
 
-        if(polylineFinal !=null){
+        if (polylineFinal != null) {
             polylineFinal.remove();
             markerPoints.clear();
-        }else {
+        } else {
 
         }
 
@@ -703,7 +708,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         if (markerPoints.size() > 1) {
             markerPoints.clear();
         }
-
 
 
         // Adding origin point to the ArrayList
@@ -714,7 +718,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         // Adding destination point to the ArrayList
         markerPoints.add(destination_loca);
 
-        Log.d("wwwwwwwwwwww",""+pick_up_loca+" "+destination_loca);
+        Log.d("wwwwwwwwwwww", "" + pick_up_loca + " " + destination_loca);
 
         // Checks, whether start and end locations are captured
         if (markerPoints.size() >= 2) {
@@ -744,11 +748,13 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         // Sensor enabled
         String sensor = "sensor=false";
 
-        String key_acces = "AIzaSyCJPd3_QNzimlIuZtiPG3wiqo-hOgPs_3I";
+//        String key_acces = "key=AIzaSyCJPd3_QNzimlIuZtiPG3wiqo-hOgPs_3I";
+
+        String key_acces = "key=AIzaSyArsA5HFv_Wpu_xjehyVT_SF5x_iZpC6z0";
 
 
         // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + sensor +"&"+key_acces;
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + key_acces;
 
         // Output format
         String output = "json";
@@ -756,7 +762,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
 
-        Log.d("eeeeeeeeeeeeeeee",url);
+        Log.d("eeeeeeeeeeeeeeee", url);
 
         return url;
     }
@@ -803,7 +809,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
 
             } catch (Exception e) {
-                data= "E";
+                data = "E";
             } finally {
 
             }
@@ -816,14 +822,14 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.d("resulllt",result);
+            Log.d("resulllt", result);
 
-            if(result.contentEquals("E")){
+            if (result.contentEquals("E")) {
 
                 Toast.makeText(getBaseContext(), "Cannot get directions, please check your internet connection",
                         Toast.LENGTH_LONG).show();
 
-            }else {
+            } else {
 
                 ParserTask parserTask = new ParserTask();
 
@@ -868,9 +874,8 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
             String duration = "";
 
 
-
             if (result.size() < 1) {
-                Toast.makeText(getBaseContext(), "No Points "+result, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "No Points " + result, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -903,24 +908,26 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(5);
-                lineOptions.color(Color.BLUE);
+                lineOptions.width(8);
+                lineOptions.color(Color.BLACK);
             }
 
             // tvDistanceDuration.setText("Distance:" + distance + ", Duration:" + duration);
 
             // Drawing polyline in the Google Map for the i-th route
-            polylineFinal= mGoogleMap.addPolyline(lineOptions);
+            polylineFinal = mGoogleMap.addPolyline(lineOptions);
         }
     }
 
 
     public class DirectionsJSONParser {
 
-        /** Receives a JSONObject and returns a list of lists containing latitude and longitude */
-        public List<List<HashMap<String,String>>> parse(JSONObject jObject){
+        /**
+         * Receives a JSONObject and returns a list of lists containing latitude and longitude
+         */
+        public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
-            List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String,String>>>() ;
+            List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String, String>>>();
             JSONArray jRoutes = null;
             JSONArray jLegs = null;
             JSONArray jSteps = null;
@@ -930,25 +937,25 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                 jRoutes = jObject.getJSONArray("routes");
 
                 /** Traversing all routes */
-                for(int i=0;i<jRoutes.length();i++){
-                    jLegs = ( (JSONObject)jRoutes.get(i)).getJSONArray("legs");
+                for (int i = 0; i < jRoutes.length(); i++) {
+                    jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                     List path = new ArrayList<HashMap<String, String>>();
 
                     /** Traversing all legs */
-                    for(int j=0;j<jLegs.length();j++){
-                        jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
+                    for (int j = 0; j < jLegs.length(); j++) {
+                        jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
 
                         /** Traversing all steps */
-                        for(int k=0;k<jSteps.length();k++){
+                        for (int k = 0; k < jSteps.length(); k++) {
                             String polyline = "";
-                            polyline = (String)((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
+                            polyline = (String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points");
                             List<LatLng> list = decodePoly(polyline);
 
                             /** Traversing all points */
-                            for(int l=0;l<list.size();l++){
+                            for (int l = 0; l < list.size(); l++) {
                                 HashMap<String, String> hm = new HashMap<String, String>();
-                                hm.put("lat", Double.toString(((LatLng)list.get(l)).latitude) );
-                                hm.put("lng", Double.toString(((LatLng)list.get(l)).longitude) );
+                                hm.put("lat", Double.toString(((LatLng) list.get(l)).latitude));
+                                hm.put("lng", Double.toString(((LatLng) list.get(l)).longitude));
                                 path.add(hm);
                             }
                         }
@@ -958,15 +965,16 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
             } catch (JSONException e) {
                 e.printStackTrace();
-            }catch (Exception e){
+            } catch (Exception e) {
             }
 
             return routes;
         }
+
         /**
          * Method to decode polyline points
          * Courtesy : http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
-         * */
+         */
         private List<LatLng> decodePoly(String encoded) {
 
             List<LatLng> poly = new ArrayList<LatLng>();
@@ -1001,70 +1009,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
             return poly;
         }
     }
-
-
-
-//    public void draw_trip_poly_line (LatLng pick_up_loca, LatLng destination_loca){
-//
-////        mMap = googleMap;
-////        LatLng sydney = new LatLng(-34, 151);
-////        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-////        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16));
-////
-////        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-////            @Override
-////            public void onMapClick(LatLng latLng) {
-////
-////            }
-////        });
-//
-//
-//
-//        if (markerPoints.size() > 1) {
-//            markerPoints.clear();
-//            mGoogleMap.clear();
-//        }
-//
-//        // Adding new item to the ArrayList
-//        markerPoints.add(pick_up_loca);
-//        markerPoints.add(destination_loca);
-//
-//        // Creating MarkerOptions
-//        MarkerOptions options1 = new MarkerOptions();
-//        // Setting the position of the marker
-//        options1.position(pick_up_loca);
-//        options1.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//// Add new marker to the Google Map Android API V2
-//        mGoogleMap.addMarker(options1);
-//
-//        MarkerOptions options2 = new MarkerOptions();
-//        options2.position(destination_loca);
-//        options2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//// Add new marker to the Google Map Android API V2
-//        mGoogleMap.addMarker(options2);
-//
-//
-//        // Checks, whether start and end locations are captured
-//        if (markerPoints.size() >= 2) {
-//
-//            LatLng origin = (LatLng) markerPoints.get(0);
-//            LatLng dest = (LatLng) markerPoints.get(1);
-//
-//            // Getting URL to the Google Directions API
-//            String url = getDirectionsUrl(origin, dest);
-//
-//            DownloadTask downloadTask = new DownloadTask();
-//
-//            // Start downloading json data from Google Directions API
-//            downloadTask.execute(url);
-//        }else {
-//            Toast.makeText(context, "Cannot draw line cause the path not set ", Toast.LENGTH_SHORT).show();
-//        }
-//
-//
-//
-//    }
-
 
 
     public void boda_rider_trip_watcher() {
@@ -1162,7 +1106,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         int town_id = settings.getInt("town_id", 0);
 
 
-        drivers_ref.whereEqualTo(DRIVERS_current_town, town_id).whereEqualTo(DRIVERS_driver_status, 1).whereEqualTo(DRIVERS_is_online,1).whereEqualTo(DRIVERS_driver_is_engaged,0).limit(5).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        drivers_ref.whereEqualTo(DRIVERS_current_town, town_id).whereEqualTo(DRIVERS_driver_status, 1).whereEqualTo(DRIVERS_is_online, 1).whereEqualTo(DRIVERS_driver_is_engaged, 0).limit(5).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -1183,8 +1127,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
                         show_boda_markers(latLng);
                     }
-                }else {
-
+                } else {
 
 
                 }
@@ -1367,6 +1310,11 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
             Intent intent = new Intent(context, ActivityGrantMerchantRequest.class);
             startActivity(intent);
 
+        } else if (id == R.id.nav_tracking) {
+
+          Intent intent = new Intent(context, ActivityTracking.class);
+          startActivity(intent);
+
         } else if (id == R.id.nav_wasup) {
 
             PackageManager packageManager = context.getPackageManager();
@@ -1432,15 +1380,9 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
             mGoogleMap.getUiSettings().setZoomGesturesEnabled(true);
 
 
-
-
-
         } catch (SecurityException e) {
             e.printStackTrace();
         }
-
-
-
 
 
         double l_latitude = gpsTracker.getLatitude();
@@ -1453,21 +1395,15 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-
-
-
-
-
-
-    public void show_boda_markers(LatLng new_location){
+    public void show_boda_markers(LatLng new_location) {
         int height = 60;
         int width = 70;
-        BitmapDrawable bitmapdraw = (BitmapDrawable)getResources().getDrawable(R.drawable.boda_mataani_logo);
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.boda_mataani_logo);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
 
 
-        MarkerOptions markerOptions_meters=new MarkerOptions().position(new_location);
+        MarkerOptions markerOptions_meters = new MarkerOptions().position(new_location);
         Marker marker_meters = mGoogleMap.addMarker(new MarkerOptions().position(new_location).
                 icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 
@@ -1507,8 +1443,25 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-    public void show_current_marker(final  LatLng current_LatLng ){
-        if(current_LatLng!=null) {
+    public void set_up_markers(LatLng my_latlng,  int determiner) {
+
+        MarkerOptions markerOptions = new MarkerOptions().position(my_latlng);
+        if(determiner == 1){
+
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            Marker marker = mGoogleMap.addMarker(markerOptions.title("Pick up "));
+
+        }else if(determiner ==2 ) {
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+            Marker marker = mGoogleMap.addMarker(markerOptions.title("Destination"));
+        }
+
+
+
+    }
+
+    public void show_current_marker(final LatLng current_LatLng) {
+        if (current_LatLng != null) {
 
             MarkerOptions markerOptions = new MarkerOptions().position(current_LatLng);
 //            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -1524,11 +1477,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    /*
-        This interface defines the interpolate method that allows us to get LatLng coordinates for
-        a location a fraction of the way between two points. It also utilizes a Linear method, so
-        that paths are linear, as they should be in most streets.
-     */
+
     private interface LatLngInterpolator {
         LatLng interpolate(float fraction, LatLng a, LatLng b);
 
@@ -1587,7 +1536,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
         return
                 finelocPermissionResult == PackageManager.PERMISSION_GRANTED &&
-                        coarselocPermissionResult == PackageManager.PERMISSION_GRANTED&&
+                        coarselocPermissionResult == PackageManager.PERMISSION_GRANTED &&
                         write_external_storage == PackageManager.PERMISSION_GRANTED &&
                         phone_call_permisions == PackageManager.PERMISSION_GRANTED;
     }
@@ -1604,8 +1553,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         }, RequestPermissionCode);
 
     }
-
-
 
 
 //
@@ -1754,7 +1701,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         }
         return data;
     }
-
 
 
 }

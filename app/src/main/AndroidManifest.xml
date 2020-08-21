@@ -58,6 +58,7 @@
         <activity android:name=".controllers.ActivityBundleTrips" />
         <activity android:name=".controllers.ActivityAddBulkTrips" />
         <activity android:name=".controllers.ActivityTripStateLog" />
+        <activity android:name=".controllers.ActivityTracking" />
 
 
         <!--        google verified syntax-->

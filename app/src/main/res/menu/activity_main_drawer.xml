@@ -28,6 +28,11 @@
             android:icon="@drawable/ic_add"
             android:title="Grant merchant access" />
 
+        <item
+            android:id="@+id/nav_tracking"
+            android:icon="@drawable/ic_location"
+            android:title="Tracking" />
+
 
 
     </group>

@@ -10,6 +10,7 @@ public class FirebaseConstant {
     //App id
     public static final String APP_ID = "BODAMTAANI";
     public static final String STORAGE_BODA_DRIVER_DOCS=  "BODA_DRIVER_DOC/";
+    public static final String STORAGE_BODA_PROFILE_PICS=  "STORAGE_BODA_PROFILE_PICS/";
 
     //collections
     public static String COL_USERS = "BODA_users";

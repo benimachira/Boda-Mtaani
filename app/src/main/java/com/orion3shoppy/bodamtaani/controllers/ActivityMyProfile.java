@@ -2,7 +2,11 @@ package com.orion3shoppy.bodamtaani.controllers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,10 +22,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,19 +43,36 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnPausedListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.orion3shoppy.bodamtaani.R;
 
 import com.orion3shoppy.bodamtaani.models.ModelDrivers;
 import com.orion3shoppy.bodamtaani.models.ModelUsers;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.orion3shoppy.bodamtaani.controllers.UniversalMethods.GetFirebaseUserID;
 import static com.orion3shoppy.bodamtaani.controllers.UniversalMethods.fix_display_null_strings;
 import static com.orion3shoppy.bodamtaani.controllers.UniversalMethods.fix_null_strings;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_DRIVERS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_USERS;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.DRIVERS_document_review_status;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.DRIVERS_photo_of_id;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.DRIVERS_photo_of_licence;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.DRIVERS_photo_of_passport;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STORAGE_BODA_DRIVER_DOCS;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STORAGE_BODA_PROFILE_PICS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.USERS_is_online;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.USERS_photo_url;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.USERS_user_name;
@@ -59,6 +85,7 @@ public class ActivityMyProfile extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference users_ref = db.collection(COL_USERS);
     private CollectionReference drivers_ref = db.collection(COL_DRIVERS);
+    private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
 
     Context context;
@@ -70,6 +97,7 @@ public class ActivityMyProfile extends AppCompatActivity {
     TextView tv_name_profile, tv_phone_no, tv_phone_status, tv_phone_name_status, tv_name_edit, tv_phone_no_edit, tv_logout;
 
     DialogController dialogController;
+    ImageView img_change_pic;
 
     String user_id;
     String user_name;
@@ -97,6 +125,11 @@ public class ActivityMyProfile extends AppCompatActivity {
     String photo_of_licence;
     double drivers_balance;
 
+    public final int RequestPermissionCode = 1;
+    public final int PICK_IMAGE = 2;
+    public int IMAGE_TO_PICK = 0;
+    String photo_path_ID;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,9 +155,12 @@ public class ActivityMyProfile extends AppCompatActivity {
         tv_boda_acc_state = (TextView) findViewById(R.id.tv_boda_acc_state);
         tv_boda_balance = (TextView) findViewById(R.id.tv_boda_balance);
         tv_total_trips = (TextView) findViewById(R.id.tv_total_trips);
+        img_change_pic = (ImageView) findViewById(R.id.img_change_pic);
 
         context = this;
         firebaseAuth = FirebaseAuth.getInstance();
+
+        dialogController= new DialogController(context);
 
 
         UID = GetFirebaseUserID();
@@ -169,6 +205,14 @@ public class ActivityMyProfile extends AppCompatActivity {
                 });
 
 
+            }
+        });
+
+
+        img_change_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                add_promo_image();
             }
         });
 
@@ -328,14 +372,17 @@ public class ActivityMyProfile extends AppCompatActivity {
                     tv_name_edit.setText("" + fix_display_null_strings(user_name));
                     tv_phone_no_edit.setText("" + fix_display_null_strings(user_phone));
 
+
                     Glide.with(context)
                             .load(photo_url)
+                            .placeholder(R.drawable.user)
+                            .error(R.drawable.user)
                             .into(img_pic_min);
 
                     if (is_merchant == 1) {
                         card_boda_driver_account.setVisibility(View.VISIBLE);
                         select_driver_info();
-                    }else {
+                    } else {
                         card_boda_driver_account.setVisibility(View.GONE);
                     }
 
@@ -371,18 +418,19 @@ public class ActivityMyProfile extends AppCompatActivity {
                     drivers_balance = note.getDrivers_balance();
 
                     if (driver_status == 1) {
-                        tv_boda_acc_state.setText("Acc. status: ACTIVE");
-
+                        tv_boda_acc_state.setText("Status: Active");
 
                     } else if (driver_status == 0) {
-                        tv_boda_acc_state.setText("Acc. status: INACTIVE");
+                        tv_boda_acc_state.setText("Status: Inactive");
 
                     } else if (driver_status == 2) {
-                        tv_boda_acc_state.setText("Acc. status: SUSPENDED");
+                        tv_boda_acc_state.setText("Status: Suspended");
 
                     }
-                    tv_boda_balance.setText("Acc. balance: " + drivers_balance);
-                    tv_total_trips.setText("No of trips: ");
+
+
+                    tv_boda_balance.setText("Balance : " + drivers_balance);
+                    tv_total_trips.setText("Bike reg: "+car_reg_no);
 
 
                 }
@@ -390,6 +438,208 @@ public class ActivityMyProfile extends AppCompatActivity {
 
             }
         });
+
+    }
+
+
+    private void upload_image_to_firebase(final String file_Path) {
+        dialogController.dialog_show("0%");
+        final StorageReference ref = mStorageRef.child(STORAGE_BODA_PROFILE_PICS + UUID.randomUUID().toString() + ".jpg");
+        Uri file = Uri.fromFile(new File(file_Path));
+        UploadTask uploadTask = ref.putFile(file);
+
+
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return ref.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    final String storage_uri = downloadUri.toString();
+
+
+                    Map<String, Object> note_pref = new HashMap<>();
+                    note_pref.put(USERS_photo_url, storage_uri);
+
+
+                    users_ref.document(UID).set(note_pref, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(context, "Profile image changed", Toast.LENGTH_SHORT).show();
+
+
+                            Glide.with(context)
+                                    .load(storage_uri)
+                                    .into(img_pic_min);
+
+
+                        }
+                    });
+
+
+                } else {
+
+                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show();
+
+
+                }
+            }
+        });
+
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                        .getTotalByteCount());
+                dialogController.update_messaging("This might take a minute.. " + (int) progress + "%");
+//                progressDialog.setMessage("This might take a minute.. " + (int) progress + "%");
+            }
+        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                System.out.println("Upload is paused");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // Handle successful uploads on complete
+                dialogController.dialog_dismiss();
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Toast.makeText(context, "Promotion image could not be uploaded", Toast.LENGTH_SHORT).show();
+                dialogController.dialog_dismiss();
+            }
+        });
+
+    }
+
+    public void run_permission_checks() {
+
+        if (!CheckingPermissionIsEnabledOrNot()) {
+            RequestMultiplePermission();
+            return;
+        }
+    }
+
+    public void add_promo_image() {
+
+        run_permission_checks();
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+
+        Intent chooserIntent = Intent.createChooser(getIntent(), "Select Image");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
+        startActivityForResult(chooserIntent, PICK_IMAGE);
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+
+            case PICK_IMAGE:
+                if (resultCode == RESULT_OK && data != null) {
+                    //data.getData return the content URI for the selected Image
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    // Get the cursor
+                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                    // Move to first row
+                    cursor.moveToFirst();
+                    //Get the column index of MediaStore.Images.Media.DATA
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    //Gets the String value in the column
+
+                    photo_path_ID = cursor.getString(columnIndex);
+                    upload_image_to_firebase(photo_path_ID);
+
+
+                    cursor.close();
+                    // Set the Image in ImageView after decoding the String
+
+
+                }
+                break;
+
+
+        }
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+
+
+            case RequestPermissionCode:
+
+                if (grantResults.length > 0) {
+
+                    boolean finelocationPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean coarsePermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean writePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    boolean readPermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+
+                    if (finelocationPermission && coarsePermission && writePermission && readPermission) {
+                        finish();
+                        startActivity(getIntent());
+                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, "Permission Denied", Toast.LENGTH_LONG).show();
+//                        finish();
+//                        startActivity(getIntent());
+
+                    }
+                }
+
+        }
+    }
+
+
+    public boolean CheckingPermissionIsEnabledOrNot() {
+
+        int finelocPermissionResult = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+        int coarselocPermissionResult = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_COARSE_LOCATION);
+        int writePermissionResult = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int readPermissionResult = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+
+
+        return
+                finelocPermissionResult == PackageManager.PERMISSION_GRANTED &&
+                        coarselocPermissionResult == PackageManager.PERMISSION_GRANTED &&
+                        readPermissionResult == PackageManager.PERMISSION_GRANTED &&
+                        writePermissionResult == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void RequestMultiplePermission() {
+
+        // Creating String Array with Permissions.
+        ActivityCompat.requestPermissions(this, new String[]{
+                ACCESS_FINE_LOCATION,
+                ACCESS_COARSE_LOCATION,
+                WRITE_EXTERNAL_STORAGE,
+                READ_EXTERNAL_STORAGE
+
+        }, RequestPermissionCode);
 
     }
 

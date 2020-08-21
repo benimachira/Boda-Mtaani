@@ -63,6 +63,7 @@ public class ActivityMyTrips extends AppCompatActivity {
 
     DialogController dialogController;
     String supa_name = "";
+    LinearLayout linear_none;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class ActivityMyTrips extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        linear_none= (LinearLayout) findViewById(R.id.linear_none);
 
         context = this;
 
@@ -134,6 +135,8 @@ public class ActivityMyTrips extends AppCompatActivity {
 
                     MrecyclerViewAdapter.notifyDataSetChanged();
 
+                }else {
+                    linear_none.setVisibility(View.VISIBLE);
                 }
 
             }

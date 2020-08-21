@@ -16,37 +16,6 @@
         android:layout_height="match_parent"
         android:layout_weight=".5"
         android:gravity="center"
-        android:id="@+id/linear_add_item"
-        android:visibility="visible"
-        android:orientation="vertical">
-
-
-        <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/my_round_button"
-            android:onClick="add_new_trip"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_location"
-            android:tint="@color/white" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Track on map"
-            android:textColor="@color/black"
-            android:textSize="10sp" />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight=".5"
-        android:gravity="center"
         android:id="@+id/linear_create_dispute"
         android:visibility="visible"
         android:orientation="vertical">

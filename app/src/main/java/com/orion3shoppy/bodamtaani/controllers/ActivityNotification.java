@@ -286,8 +286,8 @@ public class ActivityNotification extends AppCompatActivity {
             final String notification_message = required_items.get(position).getNotification_message();
             final String notification_date = required_items.get(position).getNotification_date();
 
-            holder.tv_details_lable.setText("Trip no: " + trip_state);
-            holder.tv_details.setText(" " + notification_message);
+            holder.tv_details_lable.setText("" + notification_message);
+            holder.tv_details.setText("Tracking:  " + trip_state);
             holder.tv_shop_list.setText(" " + cooking_time(notification_date));
 
 
