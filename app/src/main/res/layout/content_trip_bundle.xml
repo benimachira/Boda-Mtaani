@@ -8,6 +8,14 @@
     android:orientation="vertical">
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:visibility="visible"
+            android:id="@+id/linear_some"
+            android:layout_margin="8dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
@@ -16,6 +24,7 @@
             android:layout_height="match_parent">
 
         </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,7 +41,7 @@
                     android:layout_marginTop="100dp"
                     android:textStyle="bold"
                     android:layout_height="wrap_content"
-                    android:text="You have no trips today, See the trips from the previous days in My Trips section"
+                    android:text="You have no business trips today, See the trips from the previous days in My Trips section"
                     android:textSize="14sp" />
 
         </LinearLayout>

@@ -148,7 +148,8 @@ public class ActivityTracking extends AppCompatActivity implements OnMapReadyCal
     String trip_id;
 
 
-
+    TextView tv_current_state,tv_delivery_history;
+    LinearLayout linear_info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +161,9 @@ public class ActivityTracking extends AppCompatActivity implements OnMapReadyCal
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         progress_loading= (ProgressBar) findViewById(R.id.progress_loading);
         ed_tracking_no= (EditText) findViewById(R.id.ed_tracking_no);
+        tv_current_state= (TextView) findViewById(R.id.tv_current_state);
+        tv_delivery_history= (TextView) findViewById(R.id.tv_delivery_history);
+        linear_info =  (LinearLayout) findViewById(R.id.linear_info);
 
         mMapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -193,6 +197,22 @@ public class ActivityTracking extends AppCompatActivity implements OnMapReadyCal
         }
 
 
+        tv_delivery_history.setText(R.string.delivery_info);
+        tv_delivery_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(TextUtils.isEmpty(trip_id)){
+                    Toast.makeText(context, "Trip id is not provided", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Intent intent = new Intent(context, ActivityTripStateLog.class);
+                intent.putExtra("trip_id",trip_id );
+                startActivity(intent);
+
+            }
+        });
 
 
     }
@@ -234,22 +254,37 @@ public class ActivityTracking extends AppCompatActivity implements OnMapReadyCal
                     String driver_id = note.getTrip_driver_id();
                     int trip_is_alive = note.getTrip_is_alive();
 
-                    set_up_markers(latLng_pick_up ,1);
-                    set_up_markers(latLng_destination ,2);
+                    int trip_state = note.getTrip_state();
+                    String[] stringArray = getResources().getStringArray(R.array.trip_states);
+                    String trip_status = stringArray[trip_state];
+
+
 
                     if(trip_is_alive ==1 ) {
+
+
+
+                        set_up_markers(latLng_pick_up ,1);
+                        set_up_markers(latLng_destination ,2);
 
                         if (!TextUtils.isEmpty(driver_id)) {
                             client_display_boda_watcher(driver_id);
                         }
+
+                        add_polyline(latLng_pick_up, latLng_destination);
+
                     }
 
+                    linear_info.setVisibility(View.VISIBLE);
+                    tv_current_state.setText("Status: "+trip_status);
 //
-                    add_polyline(latLng_pick_up, latLng_destination);
 
 
                 }else {
-                    Toast.makeText(context,"A trip with this tracking number can not be found ",Toast.LENGTH_SHORT).show();
+                    linear_info.setVisibility(View.VISIBLE);
+                    tv_delivery_history.setText("");
+                    tv_current_state.setText("Trip not found");
+                    remove_poly_line();
                 }
 
                 Log.d("Sssssssss","fffffffffffffffff2"+documentSnapshot.getId());
@@ -284,14 +319,16 @@ public class ActivityTracking extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    public void add_polyline(LatLng pick_up_loca, LatLng destination_loca) {
-
+    public void remove_poly_line(){
         if (polylineFinal != null) {
             polylineFinal.remove();
             markerPoints.clear();
-        } else {
-
         }
+    }
+
+
+    public void add_polyline(LatLng pick_up_loca, LatLng destination_loca) {
+        remove_poly_line();
 
         // Already two locations
         if (markerPoints.size() > 1) {

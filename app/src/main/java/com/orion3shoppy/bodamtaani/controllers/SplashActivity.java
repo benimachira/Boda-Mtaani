@@ -122,13 +122,14 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void navigate_to_acitivity (int is_there){
+
         if(is_there ==1){
 
             Intent intent = new Intent(SplashActivity.this, ActivityHomePage.class);
             startActivity(intent);
             finish();
 
-            progress_loading.setVisibility(View.GONE);
+//            progress_loading.setVisibility(View.GONE);
 
         }else if(is_there ==2) {
 
@@ -136,7 +137,7 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
 
-            progress_loading.setVisibility(View.GONE);
+//            progress_loading.setVisibility(View.GONE);
         }
 
 

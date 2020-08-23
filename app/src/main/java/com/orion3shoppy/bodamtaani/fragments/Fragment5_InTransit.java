@@ -137,8 +137,8 @@ public class Fragment5_InTransit extends Fragment {
 
         String date_today = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
 
-        String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         int trip_state = 5;
+        String message = "Your trip tracking number "+trip_id+" completed, Thank your for choosing Boda Mtaani. ";
 
         Map<String, Object> params = new HashMap<>();
         params.put(STATES_TIME_LOG_state_id, trip_state);

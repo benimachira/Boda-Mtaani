@@ -33,6 +33,11 @@
             android:icon="@drawable/ic_location"
             android:title="Tracking" />
 
+        <item
+            android:id="@+id/nav_set_up_town"
+            android:icon="@drawable/ic_location"
+            android:title="Set up Anchor town" />
+
 
 
     </group>

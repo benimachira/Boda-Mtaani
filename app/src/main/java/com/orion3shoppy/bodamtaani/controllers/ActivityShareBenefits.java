@@ -4,16 +4,16 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Html;
+import android.os.StrictMode;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,18 +31,20 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.orion3shoppy.bodamtaani.R;
-import com.orion3shoppy.bodamtaani.models.ModelWinningUsers;
+import com.orion3shoppy.bodamtaani.models.ModelSharingInfo;
+import com.orion3shoppy.bodamtaani.models.ModelUsers;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -65,31 +67,26 @@ import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_PROMO_IM
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_SHARING_DRAW;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_SHARING_DRAW_is_winner;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_SHARING_DRAW_participation_date;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_SHARING_DRAW_participation_day;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_SHARING_DRAW_participation_user_name;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_SHARING_DRAW_share_action;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_SHARING_DRAW_user_id;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_USERS;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STORAGE_BODA_PROMO_IMAGES;
 
 public class ActivityShareBenefits extends AppCompatActivity {
 
     Context context;
     int share_action;
-    String imageURL = "https:/orion3shoppy.com/sharing_images/NEAUCLEAR REACTOR.PNG";
 
-    private static final int EXTERNAL_STORAGE_PERMISSION_CONSTANT = 100;
-    private FirebaseAuth firebaseAuth;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseUser firebaseUser_x;
-    String user_id;
     private CollectionReference collection_shares = db.collection(COL_SHARING_DRAW);
     private CollectionReference promo_images = db.collection(COL_PROMO_IMAGES);
+    private CollectionReference users_reference = db.collection(COL_USERS);
 
+    private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
-    TextView tv_2pm_selection, tv_8pm_selection, tv_yesterday_selection;
-    String admin_day;
-    String yesterday_winner = "o2hdEUtEGZVhjU4xjcgQmfMYbx62";
-    int selection_id = 1;
-    String today_winner_1 = "0";
-    String today_winner_2 = "0";
     boolean can_play = false;
     androidx.appcompat.widget.Toolbar toolbar;
     String UID;
@@ -98,13 +95,19 @@ public class ActivityShareBenefits extends AppCompatActivity {
     int is_winner;
     String local_user_id;
 
-    TextView tv_participation_status, tv_no_participants, tv_yesterday;
+    TextView tv_participation_status, tv_yesterday;
     DialogController dialogController;
     String date_today;
     public final int RequestPermissionCode = 1;
-    List<String> urlList = new ArrayList<>();
+
 
     String local_image_url;
+    String image_filename;
+    ProgressBar progress_loading;
+
+    String user_name, phone_no, email_adress;
+    String person_identity;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -120,20 +123,19 @@ public class ActivityShareBenefits extends AppCompatActivity {
         });
 
         context = this;
-        firebaseAuth = FirebaseAuth.getInstance();
-        user_id = firebaseAuth.getCurrentUser().getUid();
-        firebaseAuth = FirebaseAuth.getInstance();
 
 
         tv_participation_status = (TextView) findViewById(R.id.tv_participation_status);
         tv_yesterday = (TextView) findViewById(R.id.tv_yesterday);
-
+        progress_loading = (ProgressBar) findViewById(R.id.progress_loading);
 
         UID = GetFirebaseUserID();
 
         date_today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
 
         dialogController = new DialogController(context);
+
+        get_user_info();
 
 
         load_firebase();
@@ -151,60 +153,112 @@ public class ActivityShareBenefits extends AppCompatActivity {
 
     }
 
+    public void get_user_info() {
 
-    public void load_firebase() {
-
-        collection_shares.whereEqualTo(COL_SHARING_DRAW_user_id, UID).whereEqualTo(COL_SHARING_DRAW_participation_date, date_today).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        users_reference.document(UID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (queryDocumentSnapshots != null) {
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    ModelUsers note = documentSnapshot.toObject(ModelUsers.class);
+                    user_name = note.getUser_name();
+                    phone_no = note.getUser_phone();
+                    email_adress = note.getEmail_adress();
 
-                    if (queryDocumentSnapshots.size() > 0) {
-
-
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-
-                            ModelWinningUsers note = doc.toObject(ModelWinningUsers.class);
-
-                            local_user_id = note.getUser_id();
-                            is_winner = note.getIs_winner();
-
-
-                            if (is_winner == 1) {
-                                tv_participation_status.setText("Status: Congratulations you have won today");
-                            } else {
-                                tv_participation_status.setText("Status: Active (shared via WhatsApp)");
-                            }
-
-                            tv_participation_status.setText("Inactive");
-                            tv_yesterday.setText("See other previous winner");
-
-                        }
-
-
-                        can_play = false;
-
-//                        admin_day = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(participation_date);
-
-                    } else {
-                        can_play = true;
-
-                        tv_participation_status.setText("Status: Inactive");
-                        tv_yesterday.setText("Previous winners");
-
+                    if ((TextUtils.isEmpty(phone_no)) && (TextUtils.isEmpty(phone_no)) && (TextUtils.isEmpty(email_adress))) {
+                        person_identity = "John Doe";
+                        return;
                     }
+
+                    if (!TextUtils.isEmpty(user_name)) {
+                        person_identity = user_name;
+                        return;
+                    }
+
+                    if (!TextUtils.isEmpty(phone_no)) {
+                        person_identity = phone_no;
+                        return;
+                    }
+
+
+
+                    if (!TextUtils.isEmpty(email_adress)) {
+                        person_identity = email_adress;
+                        return;
+                    }
+
 
                 }
             }
         });
+    }
+
+
+    public void load_firebase() {
+        progress_loading.setVisibility(View.VISIBLE);
+        String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+
+        collection_shares.whereEqualTo(COL_SHARING_DRAW_user_id, UID).
+                whereEqualTo(COL_SHARING_DRAW_participation_day, times_tamp)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                        if (e != null) {
+                            progress_loading.setVisibility(View.GONE);
+                            return;
+                        }
+
+                        if (queryDocumentSnapshots != null) {
+
+                            if (queryDocumentSnapshots.size() > 0) {
+
+                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+
+                                    ModelSharingInfo note = doc.toObject(ModelSharingInfo.class);
+
+                                    local_user_id = note.getUser_id();
+                                    is_winner = note.getIs_winner();
+
+
+
+                                    tv_participation_status.setText("Your status : Already played today");
+//                            tv_yesterday.setText("See other previous winner");
+
+                                }
+
+
+                                can_play = false;
+
+//                        admin_day = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(participation_date);
+
+                            } else {
+                                can_play = true;
+
+                                tv_participation_status.setText("Your status : You can play");
+//                        tv_yesterday.setText("Previous winners");
+
+                            }
+
+                        }
+
+                        progress_loading.setVisibility(View.GONE);
+                        tv_yesterday.setText(R.string.yesterday_winner);
+                    }
+                });
 
 
     }
 
 
-    public void load_promo_images() {
+    public void load_promo_images(final int share_action) {
 
-        int random_number = new Random().nextInt(3);
+//        int random_number = new Random().nextInt(3);
+        Random r = new Random();
+        int min = 1;
+        int max = 7;
+        int random_number = r.nextInt(max - min + 1) + min;
+        Log.d("wwwww", "random no " + random_number);
 
 
         promo_images.whereEqualTo("img_id", random_number).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -218,17 +272,13 @@ public class ActivityShareBenefits extends AppCompatActivity {
 
 
                     }
+                    // Toast.makeText(context, "There a "+local_image_url,Toast.LENGTH_SHORT).show();
+                    Log.d("wwwww", "file url " + local_image_url);
 
-
+                    download_the_boy(local_image_url, share_action);
                 } else {
                     local_image_url = "";
-
                 }
-
-                Log.d("eeeeeeeee","dddd "+queryDocumentSnapshots.size()+" pp "+local_image_url);
-
-                DownloadFile asyncTask = new DownloadFile();
-                asyncTask.execute(local_image_url);
 
 
             }
@@ -236,7 +286,8 @@ public class ActivityShareBenefits extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context, "There is no image to share "+e.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "There is no image to share " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                dialogController.dialog_dismiss();
             }
         });
 
@@ -247,11 +298,13 @@ public class ActivityShareBenefits extends AppCompatActivity {
     public void share_whats_app(View view) {
         share_action = 0;
         share_starter(share_action);
+
     }
 
 
     public void share_facebook(View view) {
         share_action = 1;
+
         share_starter(share_action);
 
     }
@@ -265,194 +318,167 @@ public class ActivityShareBenefits extends AppCompatActivity {
     }
 
 
-    public void share_starter(int share_action) {
-        dialogController.dialog_show("Sharing, please wait...");
+    public void download_the_boy(String db_file_name, final int share_action) {
 
-        collection_shares.whereEqualTo(COL_SHARING_DRAW_user_id, UID).whereEqualTo(COL_SHARING_DRAW_participation_date, date_today).addSnapshotListener(new EventListener<QuerySnapshot>() {
+//        String image_filename = db_file_name.substring(db_file_name.lastIndexOf("/") + 1);
+        final String image_online_loca = STORAGE_BODA_PROMO_IMAGES + db_file_name;
+
+
+        Log.d("wwwww", "online loca 1 :  " + image_online_loca);
+
+// Create a reference with an initial file path and name
+        StorageReference pathReference = mStorageRef.child(image_online_loca);
+
+        pathReference.getBytes(1024 * 1024).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (queryDocumentSnapshots != null) {
+            public void onSuccess(byte[] bytes) {
+                Log.d("wwwww", "online loca 2 :  " + bytes);
 
-                    if (queryDocumentSnapshots.size() > 0) {
-                        can_play = false;
+                Long tsLong = System.currentTimeMillis() / 1000;
+                String timestamp = tsLong.toString();
+
+                try {
+
+//                final Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                    final File photo = new File(Environment.getExternalStorageDirectory(), "BodaMtaani" + timestamp + ".jpg");
+
+                    if (photo.exists()) {
+                        photo.delete();
+                    }
+
+                    Log.d("wwwww", "online loca 3 " + photo.getAbsolutePath());
+
+
+                    FileOutputStream fos = new FileOutputStream(photo.getPath());
+
+                    fos.write(bytes);
+                    fos.close();
+
+                    if (photo.exists()) {
+                        Log.d("wwwww", "online loca 4a");
+                        share_all(photo, share_action);
                     } else {
-                        can_play = true;
+                        Log.d("wwwww", "online loca 4b");
                     }
 
 
-                    if (can_play) {
-
-                        load_promo_images();
-
-
-                    } else {
-                        dialogController.dialog_dismiss();
-                        Toast.makeText(context, "You can only share one time in a selection", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
+                } catch (java.io.IOException e) {
+                    Log.e("wwwww", "online loca 4", e);
                 }
+
+                dialogController.dialog_dismiss();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("wwwww", "online loca 5 :  " + image_online_loca);
+
+                dialogController.dialog_dismiss();
+            }
+        });
+
+//        pathReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                // Got the download URL for 'users/me/profile.png'
+//
+//                String file_name = uri.toString();
+//
+//                AppUpdate downloadFileFromURL = new AppUpdate(context);
+//                downloadFileFromURL.execute(file_name);
+//
+//                Log.d("wwwww", "online loca 2 :  " + file_name);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle any errors
+//
+//                Log.d("wwwww", "online loca :  " + " file " + image_online_loca + " exp " + exception.getMessage());
+//            }
+//        });
+    }
+
+
+    public void download_the_file(String db_file_name) {
+
+        image_filename = db_file_name.substring(db_file_name.lastIndexOf("/") + 1);
+
+
+        String image_online_loca = STORAGE_BODA_PROMO_IMAGES + image_filename;
+
+        Log.d("wwwww", "online loca :  " + image_online_loca);
+
+        StorageReference islandRef = mStorageRef.child(image_online_loca);
+        File localFile = new File(Environment
+                .getExternalStorageDirectory().toString()
+                + "/brother_bob_marley/" + local_image_url + ".jpg");
+
+//        File localFile = File.createTempFile("images", "jpg");
+
+        islandRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                // Local temp file has been created
+
+                Log.d("wwwww", "results  " + taskSnapshot.getBytesTransferred());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+
+                Log.d("wwwww", "download error " + exception.getCause().getMessage());
+            }
+        });
+    }
+
+
+    public void share_starter(final int share_action) {
+        dialogController.dialog_show("Sharing, please wait...");
+        String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        collection_shares.whereEqualTo(COL_SHARING_DRAW_user_id, UID).
+                whereEqualTo(COL_SHARING_DRAW_participation_day, times_tamp).
+                limit(1).
+                get().
+                addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots != null) {
+
+                            if (queryDocumentSnapshots.size() > 0) {
+                                can_play = false;
+                            } else {
+                                can_play = true;
+                            }
+
+
+                            if (can_play) {
+
+                                load_promo_images(share_action);
+
+
+                            } else {
+                                dialogController.dialog_dismiss();
+                                Toast.makeText(context, "You can only share one time in a selection", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
             }
         });
 
 
     }
 
-
-    public Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
-        Matrix matrix = new Matrix();
-        // RESIZE THE BIT MAP
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        // "RECREATE" THE NEW BITMAP
-        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
-                matrix, false);
-
-        return resizedBitmap;
-    }
-
-
-    class DownloadFile extends AsyncTask<String,Integer,Long> {
-        ProgressDialog mProgressDialog = new ProgressDialog(context);// Change Mainactivity.this with your activity name.
-        String strFolderName;
-        String pic_name;
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgressDialog.setMessage("Downloading");
-            mProgressDialog.setIndeterminate(false);
-            mProgressDialog.setMax(100);
-            mProgressDialog.setCancelable(true);
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            mProgressDialog.show();
-        }
-        @Override
-        protected Long doInBackground(String... aurl) {
-            int count;
-            Long tsLong = System.currentTimeMillis() / 1000;
-            String ts = tsLong.toString();
-
-            try {
-                URL url = new URL((String) aurl[0]);
-                URLConnection conexion = url.openConnection();
-                conexion.connect();
-                String targetFileName=ts+".jpg";//Change name and subname
-                int lenghtOfFile = conexion.getContentLength();
-                String PATH = Environment.getExternalStorageDirectory()+ "/BodaMtaani/";
-                File folder = new File(PATH);
-                pic_name=PATH+targetFileName;
-                if(!folder.exists()){
-                    folder.mkdir();//If there is no folder it will be created.
-                }
-                InputStream input = new BufferedInputStream(url.openStream());
-                OutputStream output = new FileOutputStream(PATH+targetFileName);
-                byte data[] = new byte[1024];
-                long total = 0;
-                while ((count = input.read(data)) != -1) {
-                    total += count;
-                    publishProgress ((int)(total*100/lenghtOfFile));
-                    output.write(data, 0, count);
-                }
-                output.flush();
-                output.close();
-                input.close();
-            } catch (Exception e) {}
-            return null;
-        }
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            mProgressDialog.setProgress(progress[0]);
-            if(mProgressDialog.getProgress()==mProgressDialog.getMax()){
-                mProgressDialog.dismiss();
-                Toast.makeText(context, "File Downloaded", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Long aLong) {
-            super.onPostExecute(aLong);
-            File imgFile = new  File(pic_name);
-
-            if(imgFile.exists()){
-//                String image_file= imgFile.getAbsolutePath();
-                share_all(imgFile, share_action);
-            }
-
-
-        }
-
-    }
-
-    private class GetImages extends AsyncTask<Object, Object, Object> {
-        private String requestUrl, imagename_;
-
-        private Bitmap bitmap;
-        private FileOutputStream fos;
-
-        private GetImages(String requestUrl, String _imagename_) {
-            Long tsLong = System.currentTimeMillis() / 1000;
-            String ts = tsLong.toString();
-
-
-            this.requestUrl = requestUrl;
-            this.imagename_ = ts
-            ;
-        }
-
-        @Override
-        protected Object doInBackground(Object... objects) {
-            try {
-                URL url = new URL(requestUrl);
-                URLConnection conn = url.openConnection();
-                bitmap = BitmapFactory.decodeStream(conn.getInputStream());
-                bitmap = getResizedBitmap(bitmap, 1028, 720);
-
-            } catch (Exception ex) {
-                dialogController.dialog_dismiss();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-
-            File file = saveToSdCard(bitmap, imagename_);
-
-            if (file.exists()) {
-                share_all(file, share_action);
-            } else {
-                dialogController.dialog_dismiss();
-                share_all(file, share_action);
-            }
-
-        }
-    }
-
-    public File saveToSdCard(Bitmap bitmap, String filename) {
-
-        File folder = AppConstants.AD_IMAGE_STORAGE;//the dot makes this directory hidden to the user
-        folder.mkdir();
-        File file = new File(folder.getAbsoluteFile(), filename + ".jpg");
-//        if (file.exists()) {
-//            return file;
-//        }
-
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
-
-        } catch (Exception e) {
-            return null;
-        }
-        return file;
-    }
 
     public void share_all(File image_file, int share_action) {
 
@@ -495,13 +521,19 @@ public class ActivityShareBenefits extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
+
 
         if (resultCode != 0) {
+
             Map<String, Object> note = new HashMap<>();
             note.put(COL_SHARING_DRAW_user_id, UID);
-            note.put(COL_SHARING_DRAW_participation_date, date_today);
+            note.put(COL_SHARING_DRAW_participation_date, date);
             note.put(COL_SHARING_DRAW_is_winner, 0);
             note.put(COL_SHARING_DRAW_share_action, share_action);
+            note.put(COL_SHARING_DRAW_participation_day, times_tamp);
+            note.put(COL_SHARING_DRAW_participation_user_name, person_identity);
 
 
             collection_shares.add(note).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -521,10 +553,133 @@ public class ActivityShareBenefits extends AppCompatActivity {
 
         } else {
             Toast.makeText(context,
-                    "Sharing failed",
+                    "Sharing failed, or was canceled",
                     Toast.LENGTH_SHORT).show();
         }
+        Log.d("wwwwwwww", "result code " + resultCode + " request code " + requestCode + " data " + data);
 
+
+//        if (resultCode != 0) {
+//
+//
+//        } else {
+//            Toast.makeText(context,
+//                    "Sharing failed",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+
+
+    }
+
+
+    /**
+     * Background Async Task to download file
+     */
+    class DownloadFileFromURL extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread Show Progress Bar Dialog
+         */
+
+        ProgressDialog progressDialog;
+        String file_path = "";
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+
+        }
+
+        /**
+         * Downloading file in background thread
+         */
+        @Override
+        protected String doInBackground(String... f_url) {
+            Log.d("wwwww", "background url 1 " + f_url);
+
+            String image_url = f_url[0];
+            String image_filename = image_url.substring(image_url.lastIndexOf("/") + 1);
+            Long tsLong = System.currentTimeMillis() / 1000;
+            String timestamp = tsLong.toString();
+            int count;
+            try {
+                URL url = new URL(image_url);
+                URLConnection connection = url.openConnection();
+                connection.connect();
+
+                // this will be useful so that you can show a tipical 0-100%
+                // progress bar
+                int lenghtOfFile = connection.getContentLength();
+
+                // download the file
+                InputStream input = new BufferedInputStream(url.openStream(),
+                        8192);
+
+                File file_dec = new File(Environment
+                        .getExternalStorageDirectory().toString()
+                        + "/brother_bob_marley/" + timestamp + ".jpg");
+
+                // Output stream
+                OutputStream output = new FileOutputStream(file_dec);
+
+//
+
+                Log.d("wwwww", "back ground 2 " + file_dec);
+
+                byte data[] = new byte[1024];
+
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    // publishing the progress....
+                    // After this onProgressUpdate will be called
+                    publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+
+                    // writing data to file
+                    output.write(data, 0, count);
+                }
+
+                // flushing output
+                output.flush();
+
+                // closing streams
+                output.close();
+                input.close();
+
+                return file_path = file_dec.getAbsolutePath();
+
+            } catch (Exception e) {
+
+                Log.d("wwwww", "background 3 " + image_filename);
+                Log.e("Error: ", e.getMessage());
+
+                return e.getMessage();
+            }
+
+
+        }
+
+        /**
+         * Updating progress bar
+         */
+        protected void onProgressUpdate(String... progress) {
+            // setting progress percentage
+            progressDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         **/
+        @Override
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog after the file was downloaded
+            progressDialog.dismiss();
+            Log.d("wwwww", "background url  " + file_url);
+
+
+        }
 
     }
 
@@ -580,6 +735,104 @@ public class ActivityShareBenefits extends AppCompatActivity {
                 WRITE_EXTERNAL_STORAGE
 
         }, RequestPermissionCode);
+
+    }
+
+
+    public class AppUpdate extends AsyncTask<String, Void, String> {
+        Context ctx;
+        ProgressDialog progressDialog;
+
+        AppUpdate(Context ctx) {
+            this.ctx = ctx;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(ctx);
+            progressDialog.setIndeterminate(false);
+            progressDialog.setMax(100);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setTitle("Downloading Updates.....");
+            progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Long tsLong = System.currentTimeMillis() / 1000;
+            String timestamp = tsLong.toString();
+
+
+            String url = params[0];
+
+            Log.d("wwwww", "background 1 " + url);
+
+
+            int i = 0;
+            try {
+
+                //initiating a sever connection
+                URL url_update = new URL(url);
+                HttpURLConnection c = (HttpURLConnection) url_update.openConnection();
+                c.setRequestMethod("GET");
+                c.setDoOutput(true);
+                c.connect();
+
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+
+                String FileName = "BodaMtaani";
+                // Creating path to store the updated apk file
+                File file = new File(Environment.getExternalStorageDirectory(), FileName);
+                file.mkdirs();
+
+                File outputFile = new File(file, "" + timestamp);
+
+                //initiating a OUTPUT Stream
+                FileOutputStream fos = new FileOutputStream(outputFile);
+
+                InputStream is = c.getInputStream();
+
+                //put the file into bytes
+
+                byte[] buffer = new byte[1024];
+                int line = 0;
+                while ((line = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, line);
+                    progressDialog.setProgress((int) ((i / (float) buffer.length) * 100));
+                    i++;
+                }
+                fos.close();
+                is.close();
+
+                String file_name = outputFile.toString();
+
+
+                Log.d("wwwww", "background 2 " + file_name);
+
+
+                return outputFile.toString();
+
+
+            } catch (Exception e) {
+                Log.e("UpdateAPP", "Update error! " + e.getCause());
+                return e.getMessage();
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(ctx, "download complete " + result, Toast.LENGTH_LONG).show();
+            Log.d("wwwww", "background 4 " + result);
+        }
+
 
     }
 }

@@ -74,18 +74,30 @@ public class ActivityBundleTrips extends AppCompatActivity {
     String shopping_list_name;
 
     TextView tv_details, tv_shop_list;
-    LinearLayout  linear_none;
+    LinearLayout  linear_none, linear_some;
+    DialogController dialogController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_bundle);
 
+        androidx.appcompat.widget.Toolbar toolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         linear_none= (LinearLayout) findViewById(R.id.linear_none);
+        linear_some= (LinearLayout) findViewById(R.id.linear_some);
 
         context = this;
+
+        dialogController = new DialogController(context);
 
         UID = GetFirebaseUserID();
         init_message_RecyclerView();
@@ -112,13 +124,16 @@ public class ActivityBundleTrips extends AppCompatActivity {
     }
 
     public void select_data_trips() {
-
+        dialogController.dialog_show("Loading business deliveries ...");
         String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         trips_ref.whereEqualTo(TRIPS_user_id,UID).whereEqualTo(TRIPS_trip_bundle_status,1 ).whereEqualTo(TRIPS_trip_bundle_day,times_tamp ).orderBy(TRIPS_trip_date, Query.Direction.DESCENDING).limit(50).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
+                if(e!= null){
+                    linear_none.setVisibility(View.VISIBLE);
+                    linear_some.setVisibility(View.GONE);
+
                     return;
                 }
 
@@ -129,6 +144,8 @@ public class ActivityBundleTrips extends AppCompatActivity {
 
                 if (queryDocumentSnapshots.size() > 0) {
 
+                    linear_none.setVisibility(View.GONE);
+                    linear_some.setVisibility(View.VISIBLE);
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
@@ -143,7 +160,10 @@ public class ActivityBundleTrips extends AppCompatActivity {
                 }else {
 
                     linear_none.setVisibility(View.VISIBLE);
+                    linear_some.setVisibility(View.GONE);
                 }
+
+                dialogController.dialog_dismiss();
             }
         });
 

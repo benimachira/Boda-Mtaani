@@ -11,11 +11,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -63,7 +65,8 @@ public class ActivityMyTrips extends AppCompatActivity {
 
     DialogController dialogController;
     String supa_name = "";
-    LinearLayout linear_none;
+    LinearLayout linear_none, linear_some;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,6 +85,8 @@ public class ActivityMyTrips extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         linear_none= (LinearLayout) findViewById(R.id.linear_none);
+        linear_some= (LinearLayout) findViewById(R.id.linear_some);
+
 
         context = this;
 
@@ -111,8 +116,9 @@ public class ActivityMyTrips extends AppCompatActivity {
 
     private void select_user() {
 
-
-        REF_COL_TRIPS.whereEqualTo(TRIPS_user_id, UID).limit(50).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        dialogController.dialog_show("Loading my trips... ");
+        REF_COL_TRIPS.whereEqualTo(TRIPS_user_id, UID).limit(50).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
@@ -120,6 +126,10 @@ public class ActivityMyTrips extends AppCompatActivity {
 
 
                 if (queryDocumentSnapshots.size() > 0) {
+                    linear_none.setVisibility(View.GONE);
+                    linear_some.setVisibility(View.VISIBLE);
+
+
                     material_list.clear();
                     total_budget = 0;
 
@@ -137,8 +147,16 @@ public class ActivityMyTrips extends AppCompatActivity {
 
                 }else {
                     linear_none.setVisibility(View.VISIBLE);
+                    linear_some.setVisibility(View.GONE);
                 }
 
+                dialogController.dialog_dismiss();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                dialogController.dialog_dismiss();
             }
         });
 
@@ -174,7 +192,7 @@ public class ActivityMyTrips extends AppCompatActivity {
 
             public final View mView;
             LinearLayout linear_view;
-            TextView tv_details, tv_shop_list, tv_details_lable;
+            TextView tv_details, tv_shop_list, tv_details_lable,tv_trip_cost,tv_track_id;
             ImageButton linear_edit, layout2;
 
             public ViewHolder(View view) {
@@ -186,7 +204,8 @@ public class ActivityMyTrips extends AppCompatActivity {
                 linear_view = (LinearLayout) view.findViewById(R.id.linear_view);
                 tv_shop_list = (TextView) view.findViewById(R.id.tv_shop_list);
                 tv_details_lable = (TextView) view.findViewById(R.id.tv_details_lable);
-
+                tv_trip_cost = (TextView) view.findViewById(R.id.tv_trip_cost);
+                tv_track_id = (TextView) view.findViewById(R.id.tv_track_id);
 
             }
 
@@ -215,25 +234,61 @@ public class ActivityMyTrips extends AppCompatActivity {
             final String display_text = "" + required_items.get(position).getUser_id();
             final String document_id = "" + required_items.get(position).getDocument_id();
             final String trip_date = "" + required_items.get(position).getTrip_date();
+            final double trip_cost = required_items.get(position).getTrip_cost();
+            final double trip_type = required_items.get(position).getTrip_type();
 
+            String trip_type_title = "";
+            if(trip_type ==1){
+                trip_type_title = "Passenger ride trip";
+            }else if(trip_type ==2){
+                trip_type_title = "Parcel delivery trip";
+            }
 
-            holder.tv_details_lable.setText("" + (1 + position) + ". Tracking No - ");
-            holder.tv_details.setText("" + document_id);
+            holder.tv_details_lable.setText("" + (1 + position) + ". "+trip_type_title);
+            holder.tv_details.setText("Tracking number. - " );
+            holder.tv_track_id.setText("" +document_id);
             holder.tv_shop_list.setText("" + cooking_time(trip_date));
+            holder.tv_trip_cost.setText("Trip cost: Ksh " +trip_cost);
+
+
+
+
 
 
             holder.linear_view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(context, ActivityTripStateLog.class);
-                    intent.putExtra("trip_id", document_id);
-                    startActivity(intent);
+                    change_activity(document_id);
+
+                }
+            });
+
+            holder.tv_details.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    change_activity(document_id);
+
+                }
+            });
+
+            holder.tv_details_lable.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    change_activity(document_id);
 
                 }
             });
 
 
+        }
+
+        public void change_activity(String document_id){
+            Intent intent = new Intent(context, ActivityTripStateLog.class);
+            intent.putExtra("trip_id", document_id);
+            startActivity(intent);
         }
 
 

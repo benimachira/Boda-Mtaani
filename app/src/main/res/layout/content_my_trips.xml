@@ -17,6 +17,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:id="@+id/linear_some"
+            android:layout_margin="8dp"
                 android:visibility="visible"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -46,7 +47,7 @@
                     android:layout_marginTop="100dp"
                     android:textStyle="bold"
                     android:layout_height="wrap_content"
-                    android:text="Start adding items to your shopping list"
+                    android:text="You have no trips yet, Request a rider today to enjoy a ride with a qualified rider"
                     android:textSize="14sp" />
 
             </LinearLayout>

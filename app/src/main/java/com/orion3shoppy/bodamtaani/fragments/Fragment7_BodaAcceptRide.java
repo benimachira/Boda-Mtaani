@@ -47,6 +47,7 @@ import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_TRIPS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.JOB_REQUEST_driver_id;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.JOB_REQUEST_req_status;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_date;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_message;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_notification_trip;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_status;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_user_id;
@@ -128,9 +129,9 @@ public class Fragment7_BodaAcceptRide extends Fragment {
 
     public void accept_the_job (String trip_id){
         String date_today = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
-        String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         int trip_state =1;
+        String message = "Your parcel tracking number "+trip_id+" has been accepted by the rider, Give the rider a minute to arrive at the set pickup location";
 
         Map<String, Object> params = new HashMap<>();
         params.put(JOB_REQUEST_req_status, 2);
@@ -149,6 +150,7 @@ public class Fragment7_BodaAcceptRide extends Fragment {
         Map<String, Object> params_notification = new HashMap<>();
         params_notification.put(NOTIFICATION_notification_trip, trip_id);
         params_notification.put(NOTIFICATION_user_id, user_id);
+        params_notification.put(NOTIFICATION_message, message);
         params_notification.put(NOTIFICATION_date, date_today);
         params_notification.put(NOTIFICATION_status, 0);
 

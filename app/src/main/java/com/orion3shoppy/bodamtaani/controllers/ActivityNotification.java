@@ -74,6 +74,7 @@ public class ActivityNotification extends AppCompatActivity {
     DialogController dialogController;
     String supa_name = "";
     private NotificationManager notifManager;
+    LinearLayout linear_some, linear_none;
 
 
     @Override
@@ -92,6 +93,9 @@ public class ActivityNotification extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        linear_some = (LinearLayout) findViewById(R.id.linear_some);
+        linear_none = (LinearLayout) findViewById(R.id.linear_none);
 
 
         context = this;
@@ -176,6 +180,7 @@ public class ActivityNotification extends AppCompatActivity {
 
     private void select_user() {
 
+        dialogController.dialog_show("Loading notification...");
 
         REF_COL_NOTIFICATION.whereEqualTo(NOTIFICATION_user_id,UID).limit(50).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -183,8 +188,19 @@ public class ActivityNotification extends AppCompatActivity {
                 material_list.clear();
                 total_budget = 0;
 
+                if(e!= null){
+                    linear_none.setVisibility(View.VISIBLE);
+                    linear_some.setVisibility(View.GONE);
+
+                    return;
+                }
+
 
                 if (queryDocumentSnapshots.size() > 0) {
+                    linear_none.setVisibility(View.GONE);
+                    linear_some.setVisibility(View.VISIBLE);
+
+
                     Map<String, Object> params = new HashMap<>();
                     params.put(NOTIFICATION_status, 1);
 
@@ -208,7 +224,14 @@ public class ActivityNotification extends AppCompatActivity {
 //                    createNotification("This is the one", context);
                     MrecyclerViewAdapter.notifyDataSetChanged();
 
+
+                }else {
+                    linear_none.setVisibility(View.VISIBLE);
+                    linear_some.setVisibility(View.GONE);
                 }
+
+
+                dialogController.dialog_dismiss();
 
             }
         });
@@ -282,12 +305,12 @@ public class ActivityNotification extends AppCompatActivity {
         public void onBindViewHolder(final RecyclerViewAdapter.ViewHolder holder, final int position) {
             //on bind view holder >>this happens when the views have been binded to the reyclerview
 
-            final String trip_state = required_items.get(position).getNotification_trip();
+            final String trip_title = required_items.get(position).getNotification_trip();
             final String notification_message = required_items.get(position).getNotification_message();
             final String notification_date = required_items.get(position).getNotification_date();
 
             holder.tv_details_lable.setText("" + notification_message);
-            holder.tv_details.setText("Tracking:  " + trip_state);
+            holder.tv_details.setText(""+(position+1)+ ". "+trip_title);
             holder.tv_shop_list.setText(" " + cooking_time(notification_date));
 
 

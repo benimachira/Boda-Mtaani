@@ -27,7 +27,7 @@
                 android:layout_height="?android:attr/actionBarSize"
                 android:minHeight="?android:attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:title="Delivery information"
+                app:title="Set up Town"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 >
 
@@ -35,19 +35,8 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_trip_states_log" />
+        <include layout="@layout/content_my_trips" />
 
     </LinearLayout>
-
-    <include layout="@layout/content_menu_trip_state"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_marginRight="4dp"
-        android:layout_marginLeft="4dp"
-        android:id="@+id/create_shoplist_menu"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="bottom|center">
-
-    </include>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

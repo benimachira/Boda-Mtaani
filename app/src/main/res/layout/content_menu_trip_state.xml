@@ -29,7 +29,7 @@
             android:padding="2dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_dispute"
-            android:tint="@color/white" />
+            android:tint="@color/red_700" />
 
         <TextView
             android:layout_width="match_parent"

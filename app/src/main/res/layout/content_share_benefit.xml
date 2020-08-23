@@ -47,7 +47,7 @@
                     android:layout_marginTop="100dp"
                     android:textStyle="bold"
                     android:layout_height="wrap_content"
-                    android:text="There are no winners yet for this competition"
+                    android:text="You have no notification in your inbox"
                     android:textSize="14sp" />
 
             </LinearLayout>

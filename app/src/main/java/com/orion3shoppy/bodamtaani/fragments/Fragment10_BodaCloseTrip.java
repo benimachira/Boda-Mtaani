@@ -39,6 +39,7 @@ import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_STATES_T
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_TRIPS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.DRIVERS_driver_is_engaged;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_date;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_message;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_notification_trip;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_status;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_user_id;
@@ -123,8 +124,9 @@ public class Fragment10_BodaCloseTrip extends Fragment {
 
         String date_today = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.getDefault()).format(new Date());
 
-        String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         int trip_state = 5;
+        String message = "Your trip tracking number "+trip_id+" completed, Thank your for choosing Boda Mtaani. ";
+
 
         Map<String, Object> params = new HashMap<>();
         params.put(STATES_TIME_LOG_state_id, trip_state);
@@ -150,6 +152,7 @@ public class Fragment10_BodaCloseTrip extends Fragment {
         params_notification.put(NOTIFICATION_user_id, user_id);
         params_notification.put(NOTIFICATION_date, date_today);
         params_notification.put(NOTIFICATION_status, 0);
+        params_notification.put(NOTIFICATION_message, message);
 
 
 

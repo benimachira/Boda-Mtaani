@@ -11,6 +11,7 @@ public class FirebaseConstant {
     public static final String APP_ID = "BODAMTAANI";
     public static final String STORAGE_BODA_DRIVER_DOCS=  "BODA_DRIVER_DOC/";
     public static final String STORAGE_BODA_PROFILE_PICS=  "STORAGE_BODA_PROFILE_PICS/";
+    public static final String STORAGE_BODA_PROMO_IMAGES=  "BODA_PROMO_IMAGES/";
 
     //collections
     public static String COL_USERS = "BODA_users";
@@ -19,7 +20,7 @@ public class FirebaseConstant {
     public static String COL_PARCEL_STATES = "BODA_parcel_states";
     public static String COL_RIDE_STATES = "BODA_ride_states";
     public static String COL_STATES_TIME_LOG = "BODA_states_time_log";
-    public static String COL_SHARING_DRAW = "BODA_sharing_draw";
+    public static String COL_SHARING_DRAW = "BODA_sharing_competition";
     public static String COL_MERCHANT_REQUEST = "BODA_merchant_request";
     public static String COL_PAYMENTS = "BODA_payments";
     public static String COL_RIDERS_DOCUMENT = "BODA_driver_document";
@@ -107,6 +108,8 @@ public class FirebaseConstant {
     public static String COL_SHARING_DRAW_participation_date = "participation_date";
     public static String COL_SHARING_DRAW_is_winner = "is_winner";
     public static String COL_SHARING_DRAW_share_action = "share_action";
+   public static String COL_SHARING_DRAW_participation_day = "participation_day";
+    public static String COL_SHARING_DRAW_participation_user_name = "participation_user_name";
 
     public static String MERCHANT_REQUEST_user_id = "user_id";
     public static String MERCHANT_REQUEST_user_name = "user_name";
@@ -171,6 +174,9 @@ public class FirebaseConstant {
     public static String TRIP_DISPUTE_dispute_message = "dispute_message";
     public static String TRIP_DISPUTE_dispute_trip_id = "dispute_trip_id";
     public static String TRIP_DISPUTE_dispute_trip_date = "dispute_trip_date";
+    public static String TRIP_DISPUTE_dispute_user_id = "dispute_user_id";
+    public static String TRIP_DISPUTE_dispute_status = "dispute_status";
+
 
 
 

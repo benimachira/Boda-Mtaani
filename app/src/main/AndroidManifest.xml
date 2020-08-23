@@ -59,6 +59,7 @@
         <activity android:name=".controllers.ActivityAddBulkTrips" />
         <activity android:name=".controllers.ActivityTripStateLog" />
         <activity android:name=".controllers.ActivityTracking" />
+        <activity android:name=".controllers.ActivityAchorTown" />
 
 
         <!--        google verified syntax-->

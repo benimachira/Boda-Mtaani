@@ -30,7 +30,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
             android:gravity="center"
-            android:text="Tracking"
+            android:text="Parcel Tracking"
             android:textColor="@color/black" />
 
         <ProgressBar
@@ -63,28 +63,37 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:id="@+id/tv_current_state"
-            android:layout_marginTop="4dp"
-            android:gravity="center"
-            android:text="Current state"
-            android:visibility="visible"
-            android:textStyle="bold" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:id="@+id/tv_delivery_history"
-            android:layout_marginTop="4dp"
-            android:gravity="center"
-            android:onClick="show_delivery_info"
-            android:text="View delivery info"
-            android:visibility="visible"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:id="@+id/linear_info"
+            android:visibility="invisible"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:id="@+id/tv_current_state"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/black"
+                android:visibility="visible"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14dp"
+                android:id="@+id/tv_delivery_history"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:textColor="@color/owl_blue"
+                android:visibility="visible"
+                />
+        </LinearLayout>
+
 
 
         <Button

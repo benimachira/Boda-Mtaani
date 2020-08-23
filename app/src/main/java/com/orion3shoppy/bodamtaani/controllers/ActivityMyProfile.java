@@ -129,6 +129,7 @@ public class ActivityMyProfile extends AppCompatActivity {
     public final int PICK_IMAGE = 2;
     public int IMAGE_TO_PICK = 0;
     String photo_path_ID;
+    TextView tv_account_type;
 
 
     @Override
@@ -156,6 +157,8 @@ public class ActivityMyProfile extends AppCompatActivity {
         tv_boda_balance = (TextView) findViewById(R.id.tv_boda_balance);
         tv_total_trips = (TextView) findViewById(R.id.tv_total_trips);
         img_change_pic = (ImageView) findViewById(R.id.img_change_pic);
+        tv_account_type =  (TextView) findViewById(R.id.tv_account_type);
+
 
         context = this;
         firebaseAuth = FirebaseAuth.getInstance();
@@ -263,6 +266,7 @@ public class ActivityMyProfile extends AppCompatActivity {
 
             ed_name.setText(user_name);
         } else if (edit_type == 2) {
+
             ed_name.setVisibility(View.GONE);
             lay_phone.setVisibility(View.VISIBLE);
             tv_title.setText("Edit your phone number");
@@ -373,13 +377,27 @@ public class ActivityMyProfile extends AppCompatActivity {
                     tv_phone_no_edit.setText("" + fix_display_null_strings(user_phone));
 
 
+                    if (account_type == 2) {
+
+                        tv_account_type.setText("Boda boda account");
+
+                    } else if (account_type == 3) {
+
+                        tv_account_type.setText("Business delivery account");
+
+                    } else if (account_type == 7) {
+
+                        tv_account_type.setText("Admin");
+
+                    }
                     Glide.with(context)
                             .load(photo_url)
                             .placeholder(R.drawable.user)
                             .error(R.drawable.user)
                             .into(img_pic_min);
 
-                    if (is_merchant == 1) {
+                    if (account_type == 2) {
+
                         card_boda_driver_account.setVisibility(View.VISIBLE);
                         select_driver_info();
                     } else {
@@ -430,7 +448,7 @@ public class ActivityMyProfile extends AppCompatActivity {
 
 
                     tv_boda_balance.setText("Balance : " + drivers_balance);
-                    tv_total_trips.setText("Bike reg: "+car_reg_no);
+                    tv_total_trips.setText("Bike reg: "+fix_display_null_strings(car_reg_no));
 
 
                 }

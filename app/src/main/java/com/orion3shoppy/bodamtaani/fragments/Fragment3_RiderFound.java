@@ -193,7 +193,6 @@ public class Fragment3_RiderFound extends Fragment {
 
         String date_today = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
 
-        String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         int trip_state = 8;
         String notification_message = "Your current trip was canceled";
 

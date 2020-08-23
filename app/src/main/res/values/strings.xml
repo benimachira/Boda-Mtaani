@@ -13,6 +13,8 @@
     <string name="parcel_destination">Choose the delivery address</string>
     <string name="account_delete"><u>Delete My Account</u>.</string>
     <string name="logout"><u>Log Out</u>.</string>
+    <string name="delivery_info"><u>See delivery information</u>.</string>
+    <string name="yesterday_winner"><u>See yesterdays winner</u>.</string>
 
 
 
@@ -42,10 +44,12 @@
         <item>ready for pick up</item>
         <item>In transit</item>
         <item>arrived at destination</item>
-        <item>canceled</item>
+        <item>closed</item>
         <item>disputed</item>
         <item>failed</item>
-        <item>closed</item>
+        <item>canceled</item>
+
+
     </string-array>
 
 

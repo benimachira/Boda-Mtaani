@@ -4,7 +4,6 @@
     android:layout_margin="4dp"
     android:padding="8dp"
     android:minHeight="64dp"
-    android:id="@+id/linear_view"
     android:background="@color/white"
     android:orientation="horizontal"
     android:weightSum="1"
@@ -17,6 +16,8 @@
         android:layout_weight=".7"
         android:textColor="@color/colorPrimaryDark"
         android:gravity="left|center"
+        android:clickable="true"
+        android:id="@+id/linear_view"
         android:orientation="vertical">
 
         <TextView
@@ -26,18 +27,42 @@
             android:id="@+id/tv_details_lable"
             android:textColor="@color/black"
             android:text=""
-            android:textStyle="bold"
             android:textIsSelectable="true"
             android:layout_marginBottom="8dp"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:textIsSelectable="true"
             android:id="@+id/tv_details"
+            android:textColor="@color/black"
+            android:text=""
+            android:paddingLeft="20dp"
+            android:layout_marginBottom="2dp"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="left|center"
+            android:textIsSelectable="true"
+            android:id="@+id/tv_track_id"
+            android:textColor="@color/black"
+            android:text=""
+            android:textStyle="bold"
+            android:background="@drawable/my_round_et_gray"
+            android:paddingLeft="20dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:textIsSelectable="true"
+            android:id="@+id/tv_trip_cost"
             android:textColor="@color/black"
             android:text=""
             android:paddingLeft="20dp"

@@ -475,7 +475,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                         boda_watch_job_request();
                         boda_rider_trip_watcher();
 
-                    } else {
+                    } else if (account_type !=3) {
                         //if your a client watch to find out if you have any trips to watch
                         client_trip_watcher();
 
@@ -494,8 +494,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
 
     public void boda_watch_job_request() {
-
-        String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
 
         job_request_ref.whereEqualTo(JOB_REQUEST_driver_id, UID).
@@ -577,7 +575,13 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
                         Log.d("fffffffffff ", "wwww " + driver_id);
 
-                        if (trip_state == trip_accepted) {
+                        if(trip_state == new_request ){
+
+                            Fragment1_PassangerRide fragment = new Fragment1_PassangerRide();
+                            loadFragment(fragment);
+                            navigation.setVisibility(View.VISIBLE);
+
+                        }else if (trip_state == trip_accepted) {
                             //show fragment rider found -1
 
                             navigation.setVisibility(View.GONE);
@@ -1106,7 +1110,12 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         int town_id = settings.getInt("town_id", 0);
 
 
-        drivers_ref.whereEqualTo(DRIVERS_current_town, town_id).whereEqualTo(DRIVERS_driver_status, 1).whereEqualTo(DRIVERS_is_online, 1).whereEqualTo(DRIVERS_driver_is_engaged, 0).limit(5).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        drivers_ref.whereEqualTo(DRIVERS_current_town, town_id).
+                whereEqualTo(DRIVERS_driver_status, 1).
+                whereEqualTo(DRIVERS_is_online, 1).
+                whereEqualTo(DRIVERS_driver_is_engaged, 0).
+                limit(5).
+                addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -1127,9 +1136,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
                         show_boda_markers(latLng);
                     }
-                } else {
-
-
                 }
 
             }
@@ -1205,6 +1211,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         MenuItem nav_wasup = nav_Menu.findItem(R.id.nav_wasup);
         MenuItem nav_share = nav_Menu.findItem(R.id.nav_share);
         MenuItem nav_become_our_partner = nav_Menu.findItem(R.id.nav_become_our_partner);
+        MenuItem nav_set_up_town = nav_Menu.findItem(R.id.nav_set_up_town);
 
 
         nav_ac.setVisible(true);
@@ -1214,6 +1221,10 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
         nav_partner_account.setVisible(false);
         nav_grant_access.setVisible(false);
+        nav_set_up_town.setVisible(false);
+
+
+
         img_partner.setVisibility(View.GONE);
 
 
@@ -1226,6 +1237,8 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
             //extra
             nav_partner_account.setVisible(true);
             nav_grant_access.setVisible(true);
+            nav_set_up_town.setVisible(true);
+            
             img_partner.setVisibility(View.VISIBLE);
 
         }
@@ -1314,6 +1327,11 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
           Intent intent = new Intent(context, ActivityTracking.class);
           startActivity(intent);
+
+        } else if (id == R.id.nav_set_up_town) {
+
+            Intent intent = new Intent(context, ActivityAchorTown.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_wasup) {
 

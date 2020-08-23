@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.orion3shoppy.bodamtaani.controllers.UniversalMethods.GetFirebaseUserID;
@@ -62,6 +63,11 @@ import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.DRIVERS_driv
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.DRIVERS_is_online;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.DRIVERS_user_id;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.MERCHANT_REQUEST_access_granted;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_date;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_message;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_notification_trip;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_status;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.NOTIFICATION_user_id;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.USERS_account_type;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.USERS_is_merchant;
 
@@ -319,8 +325,18 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
         public void create_shop_dem(final String document_id, int request_type, final Map<String, Object> note_pref) {
             // Get a new write batch
             WriteBatch batch = db.batch();
+            String user_type= "";
 
 
+            String date_today = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
+
+
+            if(request_type ==1 ) {
+                user_type= "boda boda operator";
+            }else if(request_type == 2){
+                user_type = "business operator";
+            }
+            String message = "Thank you for choosing us as a partner.  Welcome to Boda Mtaani as "+user_type;
 
 
             //update merchant request
@@ -335,12 +351,19 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
             }else if(request_type == 2){
                 note_pref2.put(USERS_account_type, 3);
             }else {
-                note_pref2.put(USERS_account_type, 1);
+                note_pref2.put(USERS_account_type, 0);
             }
 
             note_pref2.put(USERS_is_merchant, 1);
 
 
+
+            Map<String, Object> params_notification = new HashMap<>();
+            params_notification.put(NOTIFICATION_notification_trip, "Merchant Welcome");
+            params_notification.put(NOTIFICATION_user_id, document_id);
+            params_notification.put(NOTIFICATION_message, message);
+            params_notification.put(NOTIFICATION_date, date_today);
+            params_notification.put(NOTIFICATION_status, 0);
 
 
 

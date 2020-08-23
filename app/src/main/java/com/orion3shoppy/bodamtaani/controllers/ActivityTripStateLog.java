@@ -61,8 +61,10 @@ import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_TRIPS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STATES_TIME_LOG_state_doc_id;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STATES_TIME_LOG_state_id;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIP_DISPUTE_dispute_message;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIP_DISPUTE_dispute_status;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIP_DISPUTE_dispute_trip_date;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIP_DISPUTE_dispute_trip_id;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIP_DISPUTE_dispute_user_id;
 
 public class ActivityTripStateLog extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -86,6 +88,9 @@ public class ActivityTripStateLog extends AppCompatActivity {
     String item_name ="";
     String UID;
     String trip_id;
+    TextView tv_trip_title;
+    LinearLayout linear_none,linear_some;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,10 +112,17 @@ public class ActivityTripStateLog extends AppCompatActivity {
             }
         });
 
+
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        tv_trip_title = (TextView) findViewById(R.id.tv_trip_title);
+        linear_none= (LinearLayout) findViewById(R.id.linear_none);
+        linear_some= (LinearLayout) findViewById(R.id.linear_some);
 
 
+
+        tv_trip_title.setText("Tracking no: - "+trip_id);
 
         init_message_RecyclerView();
         get_trip_info(trip_id);
@@ -182,10 +194,11 @@ public class ActivityTripStateLog extends AppCompatActivity {
 
 
                 if (queryDocumentSnapshots.size() > 0) {
+                    linear_none.setVisibility(View.GONE);
+                    linear_some.setVisibility(View.VISIBLE);
 
                     trip_list.clear();
 
-                    Toast.makeText(context, "There a trip ", Toast.LENGTH_SHORT).show();
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
@@ -197,6 +210,8 @@ public class ActivityTripStateLog extends AppCompatActivity {
 
 
                 }else {
+                    linear_none.setVisibility(View.VISIBLE);
+                    linear_some.setVisibility(View.GONE);
                     Toast.makeText(context, "No trips", Toast.LENGTH_SHORT).show();
                 }
 
@@ -338,17 +353,34 @@ public class ActivityTripStateLog extends AppCompatActivity {
                 }
 
 
-                Map<String, Object> note_pref = new HashMap<>();
-                note_pref.put(TRIP_DISPUTE_dispute_message , item_name);
-                note_pref.put(TRIP_DISPUTE_dispute_trip_id , trip_id);
-                note_pref.put(TRIP_DISPUTE_dispute_trip_date , times_tamp);
 
-
-                BODA_TRIP_DISPUTE_ref.add(note_pref).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                BODA_TRIP_DISPUTE_ref.whereEqualTo(TRIP_DISPUTE_dispute_trip_id,trip_id).whereEqualTo(TRIP_DISPUTE_dispute_user_id, UID).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(context, "Dispute submitted", Toast.LENGTH_LONG).show();
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
+                        if(queryDocumentSnapshots.size() > 0){
+                            Toast.makeText(context, "This trip has an active dispute", Toast.LENGTH_LONG).show();
+                        }else {
+                            Map<String, Object> note_pref = new HashMap<>();
+                            note_pref.put(TRIP_DISPUTE_dispute_message , item_name);
+                            note_pref.put(TRIP_DISPUTE_dispute_trip_id , trip_id);
+                            note_pref.put(TRIP_DISPUTE_dispute_trip_date , times_tamp);
+                            note_pref.put(TRIP_DISPUTE_dispute_user_id , UID);
+                            note_pref.put(TRIP_DISPUTE_dispute_status , 0);
+
+                            BODA_TRIP_DISPUTE_ref.add(note_pref).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Toast.makeText(context, "Dispute submitted", Toast.LENGTH_LONG).show();
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(context, "Failed to add", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -356,6 +388,10 @@ public class ActivityTripStateLog extends AppCompatActivity {
                         Toast.makeText(context, "Failed to add", Toast.LENGTH_LONG).show();
                     }
                 });
+
+
+
+
 
                 b.dismiss();
 
