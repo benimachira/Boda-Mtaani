@@ -327,7 +327,7 @@
                         <ImageButton
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:background="@drawable/my_round_button_gray"
+                            android:background="@drawable/my_round_button_black"
                             android:onClick="add_documents"
                             android:padding="4dp"
                             android:scaleType="fitCenter"
@@ -368,7 +368,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Withdraw to Mpesa"
+                            android:text="Deposit commission"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="10sp" />
 

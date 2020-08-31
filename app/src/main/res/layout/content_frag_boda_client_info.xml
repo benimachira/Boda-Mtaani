@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="4dp"
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="4dp"
-    android:layout_margin="4dp"
     app:cardElevation="1dp">
 
 
-<LinearLayout android:layout_height="match_parent"
-    android:layout_width="match_parent"
->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
         <LinearLayout
@@ -21,15 +20,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:orientation="vertical">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:alpha=".5"
-                android:layout_marginTop="2dp"
-                android:background="@color/gray_200" />
-
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,13 +30,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Your client"
+                    android:text="Trip information"
                     android:textColor="@color/black"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -67,19 +58,14 @@
                             android:layout_width="0dp"
                             android:layout_height="85dp"
                             android:layout_marginLeft="8dp"
-                            android:layout_weight=".2"
-                            android:gravity="center"
+                            android:layout_weight=".24"
+                            android:gravity="left|center"
                             android:orientation="horizontal">
 
                             <de.hdodenhof.circleimageview.CircleImageView
                                 android:id="@+id/img_pic_min"
-                                android:layout_width="65dp"
-                                android:layout_height="65dp"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginTop="2dp"
-                                android:layout_marginRight="10dp"
-                                android:layout_marginBottom="2dp"
-                                android:padding="5dp"
+                                android:layout_width="54dp"
+                                android:layout_height="54dp"
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/user" />
                         </LinearLayout>
@@ -89,7 +75,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="1dp"
-                            android:layout_weight=".7"
+                            android:layout_weight=".76"
                             android:gravity="center"
                             android:orientation="vertical"
                             android:padding="5dp">
@@ -101,10 +87,20 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="5dp"
                                 android:gravity="left"
-                                android:text="Wanjama mutune"
+                                android:text=""
                                 android:textAppearance="?attr/textAppearanceListItem"
-                                android:textSize="17sp"
+                                android:textSize="14sp"
                                 android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_destination_town"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="left"
+                                android:text=""
+                                android:textAppearance="?attr/textAppearanceListItem"
+                                android:textSize="14sp" />
 
                         </LinearLayout>
 
@@ -128,8 +124,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:orientation="vertical"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
 
                     <LinearLayout
@@ -139,7 +135,7 @@
                         android:orientation="horizontal"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
-                        android:weightSum="2">
+                        android:weightSum="3">
 
 
                         <LinearLayout
@@ -150,10 +146,10 @@
                             android:orientation="vertical">
 
                             <ImageButton
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
-                                android:layout_marginBottom="4dp"
                                 android:id="@+id/img_cancel_trip"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginBottom="4dp"
                                 android:background="@drawable/my_round_button_red"
                                 android:onClick="add_pictures"
                                 android:padding="6dp"
@@ -168,7 +164,7 @@
                                 android:gravity="center"
                                 android:text="Cancel ride"
                                 android:textColor="@color/red_700"
-                                android:textSize="13sp" />
+                                android:textSize="11sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -181,8 +177,8 @@
 
                             <ImageButton
                                 android:id="@+id/btn_call_driver"
-                                android:layout_width="35dp"
-                                android:layout_height="35dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
                                 android:layout_marginBottom="4dp"
                                 android:background="@drawable/my_round_button_green"
                                 android:onClick="edit_profile"
@@ -202,10 +198,39 @@
 
                         </LinearLayout>
 
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+
+                            <ImageButton
+                                android:id="@+id/btn_pickup"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginBottom="4dp"
+                                android:background="@drawable/my_round_button_black"
+                                android:onClick="edit_profile"
+                                android:padding="4dp"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_confirm_pickup"
+                                android:tint="@color/white" />
+
+                            <TextView
+                                android:id="@+id/tv_pickup"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Confirm pickup"
+                                android:textColor="@color/black"
+                                android:textSize="11sp" />
+
+                        </LinearLayout>
+
                     </LinearLayout>
-
-
-
 
 
                 </LinearLayout>
@@ -217,7 +242,6 @@
         </LinearLayout>
 
 
-
-</LinearLayout>
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

@@ -38,7 +38,7 @@
     </string-array>
 
 
-    <string-array name="trip_states">
+    <string-array name="trip_states_old">
         <item>submitted</item>
         <item>accepted</item>
         <item>ready for pick up</item>
@@ -50,6 +50,18 @@
         <item>canceled</item>
 
 
+    </string-array>
+
+
+
+    <string-array name="trip_states">
+        <item>submitted</item>0
+        <item>accepted</item>1
+        <item>picked</item>2
+        <item>trip Ended</item>3
+        <item>trip completed</item>4
+        <item>canceled</item>5
+        <item>disputed</item>6
     </string-array>
 
 

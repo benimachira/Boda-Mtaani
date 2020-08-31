@@ -440,41 +440,44 @@ public class ActivityShareBenefits extends AppCompatActivity {
         dialogController.dialog_show("Sharing, please wait...");
         String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-        collection_shares.whereEqualTo(COL_SHARING_DRAW_user_id, UID).
-                whereEqualTo(COL_SHARING_DRAW_participation_day, times_tamp).
-                limit(1).
-                get().
-                addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (queryDocumentSnapshots != null) {
+        Toast.makeText(context, "Sharing is turned off in this demo version of the app", Toast.LENGTH_LONG).show();
+        return;
 
-                            if (queryDocumentSnapshots.size() > 0) {
-                                can_play = false;
-                            } else {
-                                can_play = true;
-                            }
-
-
-                            if (can_play) {
-
-                                load_promo_images(share_action);
-
-
-                            } else {
-                                dialogController.dialog_dismiss();
-                                Toast.makeText(context, "You can only share one time in a selection", Toast.LENGTH_LONG).show();
-                                return;
-                            }
-
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
+//        collection_shares.whereEqualTo(COL_SHARING_DRAW_user_id, UID).
+//                whereEqualTo(COL_SHARING_DRAW_participation_day, times_tamp).
+//                limit(1).
+//                get().
+//                addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                        if (queryDocumentSnapshots != null) {
+//
+//                            if (queryDocumentSnapshots.size() > 0) {
+//                                can_play = false;
+//                            } else {
+//                                can_play = true;
+//                            }
+//
+//
+//                            if (can_play) {
+//
+//                                load_promo_images(share_action);
+//
+//
+//                            } else {
+//                                dialogController.dialog_dismiss();
+//                                Toast.makeText(context, "You can only share one time in a selection", Toast.LENGTH_LONG).show();
+//                                return;
+//                            }
+//
+//                        }
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//
+//            }
+//        });
 
 
     }

@@ -436,7 +436,7 @@ public class GPSTracker extends Service implements LocationListener {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(context, "Error occured , with driver arriving ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Error occurred , with driver arriving ", Toast.LENGTH_SHORT).show();
                 }
             });
 

@@ -17,6 +17,7 @@ public class FirebaseConstant {
     public static String COL_USERS = "BODA_users";
     public static String COL_TRIPS = "BODA_trips";
     public static String COL_DRIVERS = "BODA_drivers";
+    public static String COL_BUSINESS = "BODA_businesses";
     public static String COL_PARCEL_STATES = "BODA_parcel_states";
     public static String COL_RIDE_STATES = "BODA_ride_states";
     public static String COL_STATES_TIME_LOG = "BODA_states_time_log";
@@ -66,7 +67,9 @@ public class FirebaseConstant {
     public static String TRIPS_trip_bundle_day = "trip_bundle_day";
     public static String TRIPS_trip_date = "trip_date";
     public static String TRIPS_trip_cost = "trip_cost";
+    public static String TRIPS_final_total_trip_cost = "final_total_trip_cost";
     public static String TRIPS_trip_parcel_cost = "trip_parcel_cost";
+    public static String TRIPS_trip_destination_town = "trip_destination_town";
 
     public static String DRIVERS_user_id = "user_id";
     public static String DRIVERS_driver_name = "driver_name";
@@ -87,6 +90,11 @@ public class FirebaseConstant {
     public static String DRIVERS_current_town = "current_town";
 
 
+
+    public static String BUSINESSES_biz_name = "biz_name";
+    public static String BUSINESSES_biz_phone = "biz_phone";
+    public static String BUSINESSES_biz_town = "biz_town";
+    public static String BUSINESSES_registration_date = "registration_date";
 
 
 
@@ -141,6 +149,8 @@ public class FirebaseConstant {
     public static String JOB_REQUEST_request_sent = "request_sent";//{3 max}
     public static String JOB_REQUEST_request_day = "request_day";//{3 max}
     public static String JOB_REQUEST_trip_user_id = "trip_user_id";//{3 max}
+    public static String JOB_REQUEST_trip_id = "trip_id";//{3 max}
+
 
 
 

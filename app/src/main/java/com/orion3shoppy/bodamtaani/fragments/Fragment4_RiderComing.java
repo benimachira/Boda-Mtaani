@@ -351,7 +351,7 @@ public class Fragment4_RiderComing extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context,"Error occured ",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Error occurred ",Toast.LENGTH_SHORT).show();
             }
         });
 

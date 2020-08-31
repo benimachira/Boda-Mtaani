@@ -45,6 +45,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.orion3shoppy.bodamtaani.controllers.UniversalMethods.GetFirebaseUserID;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.BUSINESSES_biz_name;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.BUSINESSES_biz_phone;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.BUSINESSES_biz_town;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.BUSINESSES_registration_date;
+
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_BUSINESS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_DRIVERS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_MERCHANT_REQUEST;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_USERS;
@@ -79,6 +85,7 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
     private CollectionReference shopy_merchant_req_ref = db.collection(COL_MERCHANT_REQUEST);
     private CollectionReference users_ref = db.collection(COL_USERS);
     private CollectionReference drivers_reference = db.collection(COL_DRIVERS);
+    private CollectionReference boda_business_ref = db.collection(COL_BUSINESS);
 
     Context context;
 
@@ -102,10 +109,6 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
     boolean not_first_timer = false;
 
 
-
-
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +117,6 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         linear_none = (LinearLayout) findViewById(R.id.linear_none);
-
 
 
         context = this;
@@ -187,7 +189,6 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
         Map<String, Object> note_pref = new HashMap<>();
 
 
-
         public RecyclerViewAdapter(Context context, List<ModelMerchantRequest> required_items) {
             //define a constructer for this RecyclerViewAdapter
 
@@ -251,7 +252,7 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
 //            final String user_name = required_items.get(position).getUser_name();
 //            final int access_granted = required_items.get(position).getAccess_granted();
 //            final String document_id = required_items.get(position).getDocument_id();
-            final  int request_type = required_items.get(position).getRequest_type();
+            final int request_type = required_items.get(position).getRequest_type();
             final String user_id = required_items.get(position).getUser_id();
             final String user_name = required_items.get(position).getUser_name();
             final String boda_registration = required_items.get(position).getBoda_registration();
@@ -267,13 +268,12 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
             final double longitude = required_items.get(position).getLongitude();
 
 
-            if(request_type ==1){
+            if (request_type == 1) {
                 holder.tv_details.setText("Boda : " + user_name + " - " + boda_registration);
-            }else if(request_type ==2){
+            } else if (request_type == 2) {
                 holder.tv_details.setText("Dsp : " + biz_name + " - " + biz_phone);
 
             }
-
 
 
             if (access_granted == 1) {
@@ -287,7 +287,7 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
                     Map<String, Object> note_pref = new HashMap<>();
 
 
-                    if(request_type ==1){
+                    if (request_type == 1) {
 
                         note_pref.put(DRIVERS_is_online, 1);
                         note_pref.put(DRIVERS_driver_status, 1);
@@ -302,16 +302,24 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
                         note_pref.put(DRIVERS_current_log, longitude);
                         note_pref.put(DRIVERS_current_town, town_id);
 
-                        create_shop_dem(document_id, request_type,note_pref );
+                        create_shop_dem(document_id, request_type, note_pref);
 
-                    }else if(request_type ==2){
+                    } else if (request_type == 2) {
+                        String date_today = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
+
                         holder.tv_details.setText("Dsp : " + biz_name + " - " + biz_phone);
 
+
+                        note_pref.put(BUSINESSES_biz_name, biz_name);
+                        note_pref.put(BUSINESSES_biz_phone, biz_phone);
+                        note_pref.put(BUSINESSES_biz_town, town_id);
+                        note_pref.put(BUSINESSES_registration_date, date_today);
+
+
+                        create_shop_dem(document_id, request_type, note_pref);
+
+
                     }
-
-
-
-
 
 
                 }
@@ -321,40 +329,41 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
         }
 
 
-
         public void create_shop_dem(final String document_id, int request_type, final Map<String, Object> note_pref) {
             // Get a new write batch
             WriteBatch batch = db.batch();
-            String user_type= "";
+            String user_type = "";
 
+            DocumentReference merchant_ref = null;
+            DocumentReference merchantreqReference = shopy_merchant_req_ref.document(document_id);
+            DocumentReference usersReference = users_ref.document(document_id);
 
             String date_today = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
 
-
-            if(request_type ==1 ) {
-                user_type= "boda boda operator";
-            }else if(request_type == 2){
+            //update users information
+            Map<String, Object> note_pref2 = new HashMap<>();
+            if (request_type == 1) {
+                user_type = "boda boda operator";
+                note_pref2.put(USERS_account_type, 2);
+                merchant_ref = drivers_reference.document(document_id);
+            } else if (request_type == 2) {
                 user_type = "business operator";
+                note_pref2.put(USERS_account_type, 3);
+                merchant_ref = boda_business_ref.document(document_id);
+            } else {
+                user_type = "unknown";
+                note_pref2.put(USERS_account_type, 0);
             }
-            String message = "Thank you for choosing us as a partner.  Welcome to Boda Mtaani as "+user_type;
+
+            note_pref2.put(USERS_is_merchant, 1);
+
+
+            String message = "Thank you for choosing us as a partner.  Welcome to Boda Mtaani as " + user_type;
 
 
             //update merchant request
             Map<String, Object> note_pref1 = new HashMap<>();
             note_pref1.put(MERCHANT_REQUEST_access_granted, 1);
-
-            //update users information
-            Map<String, Object> note_pref2 = new HashMap<>();
-
-            if(request_type ==1 ) {
-                note_pref2.put(USERS_account_type, 2);
-            }else if(request_type == 2){
-                note_pref2.put(USERS_account_type, 3);
-            }else {
-                note_pref2.put(USERS_account_type, 0);
-            }
-
-            note_pref2.put(USERS_is_merchant, 1);
 
 
 
@@ -368,13 +377,7 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
 
 
 
-
-
-            DocumentReference driversReference = drivers_reference.document(document_id);
-            DocumentReference merchantreqReference = shopy_merchant_req_ref.document(document_id);
-            DocumentReference usersReference = users_ref.document(document_id);
-
-            batch.set(driversReference, note_pref, SetOptions.merge());
+            batch.set(merchant_ref, note_pref, SetOptions.merge());
             batch.set(merchantreqReference, note_pref1, SetOptions.merge());
             batch.set(usersReference, note_pref2, SetOptions.merge());
 
@@ -391,9 +394,6 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
             });
 
 
-
-
-
         }
 
 
@@ -402,8 +402,6 @@ public class ActivityGrantMerchantRequest extends AppCompatActivity {
             //returns the size of the datasource suplied to the recyclerview
             return required_items.size();
         }
-
-
 
 
     }

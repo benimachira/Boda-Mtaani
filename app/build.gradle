@@ -9,8 +9,8 @@ android {
         applicationId "com.orion3shoppy.bodamtaani"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

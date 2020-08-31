@@ -3,6 +3,7 @@ package com.orion3shoppy.bodamtaani.controllers;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,7 +28,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -66,10 +74,9 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
     private GoogleApiClient googleApiClient;
     private static final int RC_SIGN_IN = 1;
     private static final int RC_SIGN_IN_PHONE = 2;
+    private static final int REQUEST_CHECK_SETTINGS =3;
     String name, email;
     String idToken;
-
-
 
 
     private static final String KEY_UID = "user_id";
@@ -82,23 +89,23 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
     String local_UID = "";
     Context context;
 
-    ProgressDialog progressDialog;
+    DialogController dialogC;
 
 
     String phone_number = "";
-     String photo_url ="";
+    String photo_url = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
         context = this;
-        progressDialog = new ProgressDialog(context);
+        dialogC = new DialogController(context);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser_x = firebaseAuth.getCurrentUser();
 
-        UID = GetFirebaseUserID ();
+        UID = GetFirebaseUserID();
 
         //this is where we start the Auth state Listener to listen for whether the user is signed in or not
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -106,7 +113,7 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 if (!TextUtils.isEmpty(UID)) {
-                    UID= firebaseAuth.getUid();
+                    UID = firebaseAuth.getUid();
                 }
 
 
@@ -124,15 +131,12 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
                 .build();
 
 
-
-
         signInButton = findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                progressDialog.setMessage("Logging in...");
-                progressDialog.show();
+                dialogC.dialog_show("Initiating Logging in...");
 
                 Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
                 startActivityForResult(intent, RC_SIGN_IN);
@@ -172,14 +176,14 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
                         final String email_adress = string_null_treatment(user.getEmail());
                         String phone_no = string_null_treatment(user.getPhoneNumber());
                         final String user_id = string_null_treatment(user.getUid());
-                        final Uri uri= user.getPhotoUrl();
+                        final Uri uri = user.getPhotoUrl();
                         phone_no = sanitizePhoneNumber(phone_no);
 
 
-                        if (uri !=null) {
-                           photo_url = string_null_treatment(uri.toString());
-                        }else {
-                            photo_url ="";
+                        if (uri != null) {
+                            photo_url = string_null_treatment(uri.toString());
+                        } else {
+                            photo_url = "";
                         }
 
 
@@ -251,27 +255,41 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+
+
+            if (resultCode == RESULT_OK) {
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                handleSignInResult(result);
+
+            } else {
+                dialogC.dialog_dismiss();
+                Toast.makeText(getBaseContext(), "Authentication Failed, try again", Toast.LENGTH_LONG).show();
+            }
+
+
         }
 
         if (requestCode == RC_SIGN_IN_PHONE) {
+
             if (resultCode == RESULT_OK) {
 
+                select_user();
 
-                select_user ();
+                Log.d("ewwwwwwwwwwww","ddddddddddd "+RESULT_OK);
             } else {
 
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-
+                dialogC.dialog_dismiss();
                 Toast.makeText(getBaseContext(), "Phone Authentication Failed, try again", Toast.LENGTH_LONG).show();
             }
+
         }
+
+
+
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
+        //Google sign in
         if (result.isSuccess()) {
             GoogleSignInAccount account = result.getSignInAccount();
             idToken = account.getIdToken();
@@ -281,12 +299,8 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
             AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
             firebaseAuthWithGoogle(credential);
         } else {
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-
-            Log.d("eeee ","ddddddd "+result.getStatus().getStatusMessage());
-            Toast.makeText(this, "Login Unsuccessful"+result, Toast.LENGTH_SHORT).show();
+            dialogC.dialog_dismiss();
+            Toast.makeText(this, "Login Unsuccessful" + result, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -298,12 +312,10 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
-                            select_user ();
+                            select_user();
                         } else {
-                            Log.w(TAG, "signInWithCredential" + task.getException().getMessage());
-                            task.getException().printStackTrace();
-                            Toast.makeText(ActivityAuthentication.this, "Authentication failed. try again",
-                                    Toast.LENGTH_SHORT).show();
+                            dialogC.dialog_dismiss();
+                            Toast.makeText(context, "Login Unsuccessful" , Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -326,5 +338,8 @@ public class ActivityAuthentication extends AppCompatActivity implements GoogleA
             firebaseAuth.removeAuthStateListener(authStateListener);
         }
     }
+
+
+
 
 }

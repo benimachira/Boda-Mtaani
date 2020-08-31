@@ -61,6 +61,24 @@ public class ModelTrips {
     double log_2 ;
     int payment_verified;
     double trip_cost;
+    int trip_is_alive;
+    String document_id;
+    int trip_bundle_status;
+    String trip_bundle_day;
+    String trip_date;
+    String trip_destination_town;
+
+    public double getTrip_parcel_cost() {
+        return trip_parcel_cost;
+    }
+
+    double trip_parcel_cost;
+
+    public String getTrip_destination_town() {
+        return trip_destination_town;
+    }
+
+
 
     public double getTrip_cost() {
         return trip_cost;
@@ -72,8 +90,7 @@ public class ModelTrips {
         return trip_is_alive;
     }
 
-    int trip_is_alive;
-    String document_id;
+
 
 
     public int getTrip_bundle_status() {
@@ -88,9 +105,7 @@ public class ModelTrips {
         return trip_date;
     }
 
-    int trip_bundle_status;
-    String trip_bundle_day;
-    String trip_date;
+
 
 
     public ModelTrips() {
@@ -101,7 +116,7 @@ public class ModelTrips {
     public ModelTrips(String user_id,int trip_state,String trip_driver_id,
                       double lat_1,double lat_2 , double log_1 ,double log_2,int trip_type,
                       int payment_verified, int trip_bundle_status,String trip_bundle_day,
-                      String trip_date,int trip_is_alive,double trip_cost) {
+                      String trip_date,int trip_is_alive,double trip_cost,String trip_destination_town) {
 
         this.user_id = user_id;
         this.trip_state = trip_state;
@@ -117,6 +132,8 @@ public class ModelTrips {
         this.trip_date = trip_date;
         this.trip_is_alive = trip_is_alive;
         this.trip_cost = trip_cost;
+        this.trip_destination_town = trip_destination_town;
+        this.trip_parcel_cost = trip_parcel_cost;
 
 
 

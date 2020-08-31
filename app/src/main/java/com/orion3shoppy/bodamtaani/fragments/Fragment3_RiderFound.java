@@ -4,6 +4,7 @@ package com.orion3shoppy.bodamtaani.fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +24,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,6 +38,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.orion3shoppy.bodamtaani.R;
 import com.orion3shoppy.bodamtaani.controllers.ActivityHomePage;
+import com.orion3shoppy.bodamtaani.controllers.GPSTracker;
 import com.orion3shoppy.bodamtaani.models.ModelDriverRating;
 import com.orion3shoppy.bodamtaani.models.ModelDrivers;
 import com.orion3shoppy.bodamtaani.models.ModelUsers;
@@ -71,6 +77,8 @@ public class Fragment3_RiderFound extends Fragment {
     String UID;
     String trip_user_id;
     String trip_id;
+    TextView tv_name_profile,time_remaining;
+    ImageView img_pic_min;
 
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -94,6 +102,11 @@ public class Fragment3_RiderFound extends Fragment {
         btn_call_driver= view.findViewById(R.id.btn_call_driver);
         img_cancel_trip= view.findViewById(R.id.img_cancel_trip);
         ratingBar_home= view.findViewById(R.id.ratingBar_home);
+        tv_name_profile= view.findViewById(R.id.tv_name_profile);
+        img_pic_min= view.findViewById(R.id.img_pic_min);
+        time_remaining= view.findViewById(R.id.time_remaining);
+
+
         ratingBar_home.setFocusable(false);
         UID =GetFirebaseUserID();
 
@@ -137,10 +150,52 @@ public class Fragment3_RiderFound extends Fragment {
                 if(documentSnapshot.exists()){
                     ModelDrivers document = documentSnapshot.toObject(ModelDrivers.class);
                     driver_phone_number = document.getDrivers_phone();
+                    String driver_name = document.getDriver_name();
+                    String passport_photo = document.getPhoto_of_passport();
+                    double driver_lat = document.getCurrent_lat();
+                    double driver_log = document.getCurrent_log();
+
+                    LatLng driver_latlng = new LatLng(driver_lat, driver_log);
+                    calculate_time(driver_latlng);
+
+                    if (!TextUtils.isEmpty(passport_photo)) {
+                        Glide.with(context)
+                                .load(passport_photo)
+                                .placeholder(R.drawable.user)
+                                .error(R.drawable.user)
+                                .into(img_pic_min);
+                    }
+
+                    tv_name_profile.setText(""+driver_name);
                 }
 
             }
         });
+
+    }
+
+    public void calculate_time(LatLng latLngA){
+
+        GPSTracker gpsTracker =  new GPSTracker(context);
+
+
+        LatLng latLngB = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLatitude());
+
+        Location locationA= new Location("point A");
+        locationA.setLatitude(latLngA.latitude);
+        locationA.setLongitude(latLngA.longitude);
+
+        Location locationB= new Location("point B");
+        locationB.setLatitude(latLngB.latitude);
+        locationB.setLongitude(latLngB.longitude);
+
+        float distance = locationA.distanceTo(locationB);
+        float speed= 60;
+        float dist_in_km = distance/1000;
+
+        float time = dist_in_km /speed;
+
+        time_remaining.setText("dist "+dist_in_km+" time "+time);
 
     }
 
@@ -261,7 +316,7 @@ public class Fragment3_RiderFound extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context,"Error occured ",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Error occurred ",Toast.LENGTH_SHORT).show();
             }
         });
 

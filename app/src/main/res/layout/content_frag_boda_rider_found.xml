@@ -31,7 +31,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginTop="4dp"
                     android:gravity="center"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -39,6 +39,22 @@
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:id="@+id/time_remaining"
+                    android:singleLine="true"
+                    android:text="2mis away"
+                    android:textStyle="bold"
+                    android:textColor="@color/owl_blue"
+                    android:textSize="14sp" />
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -93,7 +109,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="5dp"
                                 android:gravity="left"
-                                android:text="Joel Kamau"
+                                android:text=""
                                 android:isIndicator="true"
                                 android:textAppearance="?attr/textAppearanceListItem"
                                 android:textSize="15sp"

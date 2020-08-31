@@ -55,6 +55,7 @@ import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STATES_TIME_
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STATES_TIME_LOG_state_doc_id;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STATES_TIME_LOG_state_id;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STATES_TIME_LOG_state_time;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIPS_payment_trip_is_alive;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIPS_trip_driver_id;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIPS_trip_state;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIPS_trip_type;
@@ -139,6 +140,7 @@ public class Fragment7_BodaAcceptRide extends Fragment {
         Map<String, Object> trip_data = new HashMap<>();
         trip_data.put(TRIPS_trip_state, trip_state);
         trip_data.put(TRIPS_trip_driver_id, UID);
+        trip_data.put(TRIPS_payment_trip_is_alive, 1);
 
 
         Map<String, Object> params_log_data = new HashMap<>();
@@ -204,7 +206,7 @@ public class Fragment7_BodaAcceptRide extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context,"Error occured ",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"Error occurred ",Toast.LENGTH_SHORT).show();
             }
         });
 

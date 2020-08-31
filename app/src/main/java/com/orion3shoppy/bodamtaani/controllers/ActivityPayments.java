@@ -344,12 +344,10 @@ public class ActivityPayments extends AppCompatActivity {
 
     }
 
-    public static int minIndex (List<Float> list) {
-        return list.indexOf (Collections.min(list)); }
-
 
 
     public void insert_trip(final String _phone, int town_id) {
+
         String times_tamp = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         String todays_date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
 

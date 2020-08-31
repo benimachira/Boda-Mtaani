@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="1dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="Trip information"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/gray_200"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="85dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_weight=".24"
+                            android:gravity="left|center"
+                            android:orientation="horizontal">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/img_pic_min"
+                                android:layout_width="54dp"
+                                android:layout_height="54dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/user" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="1dp"
+                            android:layout_weight=".76"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+
+                            <TextView
+                                android:id="@+id/tv_name_profile"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="left"
+                                android:text=""
+                                android:textAppearance="?attr/textAppearanceListItem"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_destination_town"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="left"
+                                android:text=""
+                                android:textAppearance="?attr/textAppearanceListItem"
+                                android:textSize="14sp" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="1dp"
+                            android:layout_weight=".1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="3dp"
+                        android:orientation="horizontal"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:weightSum="2">
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+
+                            <ImageButton
+                                android:id="@+id/btn_call_driver"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginBottom="4dp"
+                                android:background="@drawable/my_round_button_green"
+                                android:onClick="edit_profile"
+                                android:padding="6dp"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_call"
+                                android:tint="@color/white" />
+
+                            <TextView
+                                android:id="@+id/tv_like_icon"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Call client"
+                                android:textColor="@color/green_500"
+                                android:textSize="11sp" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+
+                            <ImageButton
+                                android:id="@+id/btn_end_trip"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_marginBottom="4dp"
+                                android:background="@drawable/my_round_button_black"
+                                android:onClick="edit_profile"
+                                android:padding="4dp"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_end_trip"
+                                android:tint="@color/white" />
+
+                            <TextView
+                                android:id="@+id/tv_pickup"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="End trip"
+                                android:textColor="@color/black"
+                                android:textSize="11sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

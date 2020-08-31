@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -16,9 +17,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -45,12 +48,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -79,6 +91,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.orion3shoppy.bodamtaani.R;
 import com.orion3shoppy.bodamtaani.fragments.Fragment11_Tracking;
+import com.orion3shoppy.bodamtaani.fragments.Fragment12_Boda_TripOngoing;
+import com.orion3shoppy.bodamtaani.fragments.Fragment13_Boda_CompleteTrip;
 import com.orion3shoppy.bodamtaani.fragments.Fragment4_RiderComing;
 import com.orion3shoppy.bodamtaani.fragments.Fragment2_ParcelRide;
 import com.orion3shoppy.bodamtaani.fragments.Fragment1_PassangerRide;
@@ -144,7 +158,7 @@ import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIPS_user_i
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.USERS_firebase_service_id;
 
 
-public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCallback, LocationListener, NavigationView.OnNavigationItemSelectedListener {
+public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener {
 
     private SupportMapFragment mMapFragment; // MapView UI element
 
@@ -186,8 +200,8 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
     public static final int AUTOCOMPLETE_REQUEST_CODE = 4;
     public static final int AUTOCOMPLETE_REQUEST_CODE2 = 5;
-    public static final int AUTOCOMPLETE_REQUEST_CODE_DELIVERY = 6;
-    public static final int AUTOCOMPLETE_REQUEST_CODE2_DELIVERY = 7;
+    public static final int REQUEST_CHECK_SETTINGS = 6;
+
     List<Double> list_of_latitude = new ArrayList<Double>();
     List<Double> list_of_longitude = new ArrayList<Double>();
     double distance, trip_cost;
@@ -231,6 +245,9 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
     ArrayList<LatLng> markerPoints;
 
     Polyline polylineFinal = null;
+    boolean GpsStatus ;
+
+
 
 
     @Override
@@ -289,14 +306,9 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
             return;
         }
 
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        check_gps();
 
-        } else {
-            showGPSDisabledAlertToUser();
-            return;
-        }
 
         mMapFragment.getMapAsync(this);
 
@@ -381,6 +393,8 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
 
     }
+
+
 
     public void loadFragment(androidx.fragment.app.Fragment fragment) {
         // load fragment
@@ -475,9 +489,11 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                         boda_watch_job_request();
                         boda_rider_trip_watcher();
 
-                    } else if (account_type !=3) {
-                        //if your a client watch to find out if you have any trips to watch
+                    }else {
+
                         client_trip_watcher();
+
+                        Log.d("wwwwwwwww","eeeee "+account_type);
 
                     }
 
@@ -502,12 +518,13 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.d("wwwwww", "we is 2 ");
+                            Log.d("dddddddddd ", "we is 1  ");
                             return;
 
                         }
 
                         if (queryDocumentSnapshots.size() > 0) {
+                            Log.d("dddddddddd ", "we is 2 ");
                             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                                 ModelJobRequests note = doc.toObject(ModelJobRequests.class);
                                 String trip_id = note.getTrip_id();
@@ -526,8 +543,9 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
 
                             }
+
                         } else {
-                            Log.d("wwwwww", "No driver for this");
+                            Log.d("dddddddddd ", "No driver for this");
                         }
 
                     }
@@ -612,17 +630,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                         } else if (trip_state == pick_up) {
                             //show driver confirmed pickup now at destination 3
 
-                            navigation.setVisibility(View.GONE);
-                            Bundle bundle = new Bundle();
-                            bundle.putString("trip_id", doc.getId());
-                            bundle.putInt("account_type", (int) account_type);
-
-                            Fragment5_InTransit fragment5 = new Fragment5_InTransit();
-                            fragment5.setArguments(bundle);
-                            loadFragment(fragment5);
-
-                        } else if (trip_state == destination) {
-                            //show arrived at destination -4
 
                             navigation.setVisibility(View.GONE);
                             Bundle bundle = new Bundle();
@@ -632,18 +639,43 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                             fragment6.setArguments(bundle);
                             loadFragment(fragment6);
 
-                        } else if (trip_state == closed) {
-                            //show rate rider -5
-
-                            Fragment1_PassangerRide fragment = new Fragment1_PassangerRide();
-                            loadFragment(fragment);
-                            navigation.setVisibility(View.VISIBLE);
-
-
-                        } else if (trip_state == failed) {
-                            //show fail after the job dint find driver -7
+//                            navigation.setVisibility(View.GONE);
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString("trip_id", doc.getId());
+//                            bundle.putInt("account_type", (int) account_type);
+//
+//                            Fragment5_InTransit fragment5 = new Fragment5_InTransit();
+//                            fragment5.setArguments(bundle);
+//                            loadFragment(fragment5);
 
                         }
+
+
+
+//
+//                        else if (trip_state == destination) {
+//                            //show arrived at destination -4
+//
+//                            navigation.setVisibility(View.GONE);
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString("driver_id", driver_id);
+//
+//                            Fragment6_ArrivedRateRider fragment6 = new Fragment6_ArrivedRateRider();
+//                            fragment6.setArguments(bundle);
+//                            loadFragment(fragment6);
+//
+//                        } else if (trip_state == closed) {
+//                            //show rate rider -5
+//
+//                            Fragment1_PassangerRide fragment = new Fragment1_PassangerRide();
+//                            loadFragment(fragment);
+//                            navigation.setVisibility(View.VISIBLE);
+//
+//
+//                        } else if (trip_state == failed) {
+//                            //show fail after the job dint find driver -7
+//
+//                        }
 
 
                         Log.d("eeeeeeeee", "wwww : " + trip_state);
@@ -1020,6 +1052,7 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         //RIDERS TRIP WATCH
 
 
+
         trips_ref.whereEqualTo(TRIPS_payment_trip_is_alive, 1).
                 whereEqualTo(TRIPS_trip_driver_id, UID).
                 limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -1033,15 +1066,22 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         ModelTrips note = doc.toObject(ModelTrips.class);
+                        note.setDocument_id(doc.getId());
+
                         int trip_state = note.getTrip_state();
                         String get_user_id = note.getUser_id();
+                        String document_id = note.getDocument_id();
+                        String user_id = note.getUser_id();
+
+
 
                         if (trip_state == 1) {
                             //show fragment rider found -1
 
                             navigation.setVisibility(View.GONE);
                             Bundle bundle = new Bundle();
-                            bundle.putString("user_id", UID);
+                            bundle.putString("user_id", user_id);
+                            bundle.putString("trip_id", document_id);
 
                             Fragment8_Boda_Client_Details fragment8 = new Fragment8_Boda_Client_Details();
                             fragment8.setArguments(bundle);
@@ -1052,11 +1092,12 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
                             navigation.setVisibility(View.GONE);
                             Bundle bundle = new Bundle();
+                            bundle.putString("user_id", user_id);
                             bundle.putString("trip_id", doc.getId());
 
-                            Fragment9_BodaConfirmPickup fragment9 = new Fragment9_BodaConfirmPickup();
-                            fragment9.setArguments(bundle);
-                            loadFragment(fragment9);
+                            Fragment12_Boda_TripOngoing fragment12 = new Fragment12_Boda_TripOngoing();
+                            fragment12.setArguments(bundle);
+                            loadFragment(fragment12);
 
                         } else if (trip_state == pick_up) {
                             //Driver has authorized pick up now in transit -3
@@ -1064,34 +1105,14 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
                             navigation.setVisibility(View.GONE);
                             Bundle bundle = new Bundle();
                             bundle.putString("trip_id", doc.getId());
-                            bundle.putInt("account_type", (int) account_type);
+                            bundle.putString("user_id",user_id);
 
 
-                            Fragment5_InTransit fragment5 = new Fragment5_InTransit();
-                            fragment5.setArguments(bundle);
-                            loadFragment(fragment5);
-
-                        } else if (trip_state == destination) {
-                            //show arrived at destination -4
-                            navigation.setVisibility(View.GONE);
-                            Bundle bundle = new Bundle();
-                            bundle.putString("trip_id", doc.getId());
-                            bundle.putString("user_id", get_user_id);
-
-                            Fragment10_BodaCloseTrip fragment10 = new Fragment10_BodaCloseTrip();
-                            fragment10.setArguments(bundle);
-                            loadFragment(fragment10);
-
-
-                        } else if (trip_state == closed) {
-                            //show rate rider -5
-
-
-                        } else if (trip_state == failed) {
-                            //show fail after the job dint find driver -7
+                            Fragment13_Boda_CompleteTrip fragment13 = new Fragment13_Boda_CompleteTrip();
+                            fragment13.setArguments(bundle);
+                            loadFragment(fragment13);
 
                         }
-
 
                     }
                 }
@@ -1144,6 +1165,25 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
 
     }
 
+    public void check_gps(){
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            showGPSDisabledAlertToUser();
+        }
+    }
+
 
     private void showGPSDisabledAlertToUser() {
 
@@ -1188,10 +1228,33 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         startActivityForResult(intent, request_code);
     }
 
+    public void centreMapOnLocation(LatLng location){
+
+        Log.d("ddddddddddddddd","ddddd");
+
+        LatLng userLocation = new LatLng(location.latitude,location.longitude);
+        mGoogleMap.clear();
+//        mGoogleMap.addMarker(new MarkerOptions().position(userLocation));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,12));
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
+        if(requestCode==RequestgpsCode){
+            finish();
+            startActivity(getIntent());
+            GPSTracker gpsTracker = new GPSTracker(context);
+            LatLng latLng= new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+            centreMapOnLocation(latLng);
+
+
+
+
+        }
 
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
@@ -1253,6 +1316,8 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         if (mMapFragment != null) {
             mMapFragment.onResume();
         }
+
+
     }
 
     @Override
@@ -1490,11 +1555,6 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
 
     private interface LatLngInterpolator {
         LatLng interpolate(float fraction, LatLng a, LatLng b);
@@ -1573,152 +1633,57 @@ public class ActivityHomePage extends AppCompatActivity implements OnMapReadyCal
     }
 
 
+
+
+//    protected void createLocationRequest() {
 //
-//    private class DownloadTask extends AsyncTask<String,String,String> {
+//        LocationRequest locationRequest = LocationRequest.create();
+//        locationRequest.setInterval(10000);
+//        locationRequest.setFastestInterval(5000);
+//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 //
-//        @Override
-//        protected String doInBackground(String... url) {
+//        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+//                .addLocationRequest(locationRequest);
 //
-//            String data = "";
+//        SettingsClient client = LocationServices.getSettingsClient(this);
+//        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
 //
-//            try {
-//                data = downloadUrl(url[0]);
-//            } catch (Exception e) {
-//                Log.d("Background Task", e.toString());
+//
+//
+//        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+//            @Override
+//            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+//                // All location settings are satisfied. The client can initialize
+//                // location requests here.
+//                // ...
+//
+//                Toast.makeText(context, "Gps already open",
+//                        Toast.LENGTH_LONG).show();
+//                Log.d("location settings",locationSettingsResponse.toString());
 //            }
-//            return data;
-//        }
+//        });
 //
-//        @Override
-//        protected void onPostExecute(String result) {
-//            super.onPostExecute(result);
-//
-//            ParserTask parserTask = new ParserTask();
-//
-//
-//            parserTask.execute(result);
-//
-//        }
-//
-//    }
-//
-//    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap>>> {
-//
-//        // Parsing the data in non-ui thread
-//        @Override
-//        protected List<List<HashMap>> doInBackground(String... jsonData) {
-//
-//            JSONObject jObject;
-//            List<List<HashMap>> routes = null;
-//
-//            try {
-//                jObject = new JSONObject(jsonData[0]);
-//                DirectionsJSONParser parser = new DirectionsJSONParser();
-//
-//                routes = parser.parse(jObject);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            return routes;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(List<List<HashMap>> result) {
-//            ArrayList points = null;
-//            PolylineOptions lineOptions = null;
-//            MarkerOptions markerOptions = new MarkerOptions();
-//
-//            for (int i = 0; i < result.size(); i++) {
-//                points = new ArrayList();
-//                lineOptions = new PolylineOptions();
-//
-//                List<HashMap> path = result.get(i);
-//
-//                for (int j = 0; j < path.size(); j++) {
-//                    HashMap point = path.get(j);
-//
-//                    double lat = Double.parseDouble(point.get("lat"));
-//                    double lng = Double.parseDouble(point.get("lng"));
-//                    LatLng position = new LatLng(lat, lng);
-//
-//                    points.add(position);
+//        task.addOnFailureListener(this, new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                if (e instanceof ResolvableApiException) {
+//                    // Location settings are not satisfied, but this can be fixed
+//                    // by showing the user a dialog.
+//                    try {
+//                        // Show the dialog by calling startResolutionForResult(),
+//                        // and check the result in onActivityResult().
+//                        ResolvableApiException resolvable = (ResolvableApiException) e;
+//                        resolvable.startResolutionForResult(ActivityHomePage.this,
+//                                REQUEST_CHECK_SETTINGS);
+//                    } catch (IntentSender.SendIntentException sendEx) {
+//                        // Ignore the error.
+//                    }
 //                }
-//
-//                lineOptions.addAll(points);
-//                lineOptions.width(12);
-//                lineOptions.color(Color.RED);
-//                lineOptions.geodesic(true);
-//
 //            }
-//
-//// Drawing polyline in the Google Map for the i-th route
-//            mGoogleMap.addPolyline(lineOptions);
-//        }
-//
-//
-//    }
-//
-//
-//    private String getDirectionsUrl(LatLng origin, LatLng dest) {
-//
-//        // Origin of route
-//        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-//
-//        // Destination of route
-//        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-//
-//        // Sensor enabled
-//        String sensor = "sensor=false";
-//        String mode = "mode=driving";
-//
-//        // Building the parameters to the web service
-//        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
-//
-//        // Output format
-//        String output = "json";
-//
-//        // Building the url to the web service
-//        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
-//
-//
-//        return url;
+//        });
 //    }
 
-    private String downloadUrl(String strUrl) throws IOException {
 
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-            urlConnection.connect();
-
-            iStream = urlConnection.getInputStream();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
-            StringBuffer sb = new StringBuffer();
-
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-            data = sb.toString();
-
-            br.close();
-
-        } catch (Exception e) {
-            Log.d("Exception", e.toString());
-        } finally {
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
-    }
 
 
 }
