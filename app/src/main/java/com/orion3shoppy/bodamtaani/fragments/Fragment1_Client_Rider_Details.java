@@ -44,7 +44,7 @@ import java.util.Map;
 
 import static com.orion3shoppy.bodamtaani.controllers.UniversalMethods.GetFirebaseUserID;
 import static com.orion3shoppy.bodamtaani.controllers.UniversalMethods.fix_display_null_strings;
-import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_NOTIFICATION;
+import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_DRIVERS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_STATES_TIME_LOG;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_TRIPS;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.COL_USERS;
@@ -59,20 +59,20 @@ import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STATES_TIME_
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.STATES_TIME_LOG_state_time;
 import static com.orion3shoppy.bodamtaani.firebase.FirebaseConstant.TRIPS_trip_state;
 
-public class Fragment12_Boda_TripOngoing extends Fragment {
+public class Fragment1_Client_Rider_Details extends Fragment {
     Context context;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference users_ref = db.collection(COL_USERS);
     private CollectionReference trips_ref = db.collection(COL_TRIPS);
     private CollectionReference boda_state_log = db.collection(COL_STATES_TIME_LOG);
-    private CollectionReference notification_refence = db.collection(COL_NOTIFICATION);
 
+    private CollectionReference boda_driver_ref = db.collection(COL_DRIVERS);
     String client_phone_number;
     TextView tv_name_profile;
     ImageView img_pic_min;
     TextView tv_destination_town;
-    ImageButton btn_end_trip;
     String UID;
+    ImageButton btn_pickup;
 
 
 
@@ -84,26 +84,26 @@ public class Fragment12_Boda_TripOngoing extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_frag_boda_trip_ongoing, container, false);
+        View view = inflater.inflate(R.layout.content_frag_client_rider_info, container, false);
         context= getContext();
         tv_name_profile= view.findViewById(R.id.tv_name_profile);
         img_pic_min= view.findViewById(R.id.img_pic_min);
         tv_destination_town = view.findViewById(R.id.tv_destination_town);
-        btn_end_trip = view.findViewById(R.id.btn_end_trip);
+        btn_pickup = view.findViewById(R.id.btn_pickup);
 
         final String user_id = getArguments().getString("user_id");
         final String trip_id = getArguments().getString("trip_id");
+
         UID = GetFirebaseUserID();
 
         get_client_info(user_id);
         get_trip_information(trip_id);
 
-        btn_end_trip.setOnClickListener(new View.OnClickListener() {
+
+        btn_pickup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 dialog_win(trip_id, user_id);
-
             }
         });
 
@@ -112,7 +112,7 @@ public class Fragment12_Boda_TripOngoing extends Fragment {
 
     public void get_client_info(String client_id){
 
-        users_ref.document(client_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        boda_driver_ref.document(client_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
@@ -177,8 +177,6 @@ public class Fragment12_Boda_TripOngoing extends Fragment {
                 if(documentSnapshot.exists()){
                     ModelTrips document = documentSnapshot.toObject(ModelTrips.class);
                     String destination_town = document.getTrip_destination_town();
-
-
                     Log.d("ewwwwwwww", "ddddddddd "+trip_id);
                     tv_destination_town.setText("Destination: "+fix_display_null_strings(destination_town));
                 }else {
@@ -189,21 +187,19 @@ public class Fragment12_Boda_TripOngoing extends Fragment {
         });
     }
 
-
     private void dialog_win(final  String trip_id, final  String user_id) {
-
-        String message = "End trip and receive a payment from your client";
+        String message = "Confirm pick up to begin trip.";
 
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("Confirm End trip");
+        alertDialogBuilder.setTitle("Confirm Pick up");
         alertDialogBuilder.setMessage(message)
                 .setCancelable(true)
                 .setPositiveButton("confirm",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
-                                end_trip(trip_id,user_id);
+                                accept_the_job(trip_id,user_id);
                             }
                         });
         alertDialogBuilder.setNegativeButton("dismiss",
@@ -216,12 +212,12 @@ public class Fragment12_Boda_TripOngoing extends Fragment {
         alert.show();
     }
 
-    public void end_trip (String trip_id, final String user_id){
+    public void accept_the_job (String trip_id, final String user_id){
 
         String date_today = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
 
-        int trip_state = 3;
-        String message ="Your trip tracking number " +trip_id+" has ended, Thank you for choosing Boda Mtaani.";
+        int trip_state = 2;
+        String message ="Your trip tracking number " +trip_id+" has begun.";
 
         Map<String, Object> params = new HashMap<>();
         params.put(STATES_TIME_LOG_state_id, trip_state);
@@ -254,10 +250,6 @@ public class Fragment12_Boda_TripOngoing extends Fragment {
         // Set the value of 'NYC'
         DocumentReference trip_reference = trips_ref.document(trip_id);
         batch.set(trip_reference,trip_data, SetOptions.merge());
-
-        DocumentReference notification_reference = notification_refence.document(UID);
-        batch.set(notification_reference,params_notification, SetOptions.merge());
-
 
         // Commit the batch
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
